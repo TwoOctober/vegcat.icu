@@ -411,7 +411,7 @@ export default function Component() {
               {[
                 { icon: BilibiliIcon, label: "Bilibili", href: "https://m.bilibili.com/space/497350955" },
                 { icon: Gamepad2, label: "Steam", href: "https://steamcommunity.com/id/TwoOctober" },
-                { icon: Globe, label: "CS1.6下载站", href: "https://6657sb.icu/" },
+                { icon: Globe, label: "联系我", href: "tencent://message/?uin=1145145797&Site=&Menu=yes" },
               ].map((item, index) => (
                 <motion.div
                   key={item.label}
@@ -462,33 +462,75 @@ export default function Component() {
         </div>
       </motion.div>
 
-      {/* 底部信息区域 - 三个元素在同一水平线 */}
+      {/* 底部信息区域 - 针对各种设备优化 */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 10 : 0 }}
         transition={{ delay: 3.0, duration: 0.6, ease: "easeOut" }}
-        className="relative z-10 flex justify-between items-center px-4 sm:px-8 pb-2 sm:pb-4"
+        className="relative z-10 pb-2 sm:pb-4"
       >
-        {/* 左侧版权信息 */}
-        <div className="text-gray-400 text-xs sm:text-sm">
-          <TypewriterEffect text="© 2024" delay={300} speed={50} />
+        {/* 超小屏幕 (< 375px) - 垂直堆叠 */}
+        <div className="block xs:hidden px-2 space-y-1">
+          <div className="text-center text-gray-400 text-xs">
+            <TypewriterEffect text="© 2024" delay={300} speed={50} />
+          </div>
+          <div className="text-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs px-2 py-1"
+              asChild
+            >
+              <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
+                旧版网页
+              </a>
+            </Button>
+          </div>
+          <div className="text-center text-gray-400 text-xs">
+            <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
+          </div>
         </div>
 
-        {/* 中间旧版网页按钮 */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs sm:text-sm px-2 py-1"
-          asChild
-        >
-          <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
-            旧版网页
-          </a>
-        </Button>
+        {/* 小屏幕 (375px - 640px) - 紧凑水平布局 */}
+        <div className="hidden xs:flex sm:hidden justify-between items-center px-3">
+          <div className="text-gray-400 text-xs flex-shrink-0">
+            <TypewriterEffect text="© 2024" delay={300} speed={50} />
+          </div>
+          <div className="flex-shrink-0 mx-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs px-2 py-1"
+              asChild
+            >
+              <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
+                旧版
+              </a>
+            </Button>
+          </div>
+          <div className="text-gray-400 text-xs flex-shrink-0 text-right">
+            <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
+          </div>
+        </div>
 
-        {/* 右侧 Made with passion */}
-        <div className="text-gray-400 text-xs sm:text-sm">
-          <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
+        {/* 中等及以上屏幕 (≥ 640px) - 标准水平布局 */}
+        <div className="hidden sm:flex justify-between items-center px-4 sm:px-8">
+          <div className="text-gray-400 text-xs sm:text-sm">
+            <TypewriterEffect text="© 2024" delay={300} speed={50} />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs sm:text-sm px-2 py-1"
+            asChild
+          >
+            <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
+              旧版网页
+            </a>
+          </Button>
+          <div className="text-gray-400 text-xs sm:text-sm">
+            <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
+          </div>
         </div>
       </motion.div>
     </div>
