@@ -411,7 +411,7 @@ export default function Component() {
               {[
                 { icon: BilibiliIcon, label: "Bilibili", href: "https://m.bilibili.com/space/497350955" },
                 { icon: Gamepad2, label: "Steam", href: "https://steamcommunity.com/id/TwoOctober" },
-                { icon: Globe, label: "联系我", href: "tencent://message/?uin=1145145797&Site=&Menu=yes" },
+                { icon: Globe, label: "联系我", href: "http://wpa.qq.com/msgrd?v=3&uin=1145145797&site=qq&menu=yes" },
               ].map((item, index) => (
                 <motion.div
                   key={item.label}
@@ -462,73 +462,37 @@ export default function Component() {
         </div>
       </motion.div>
 
-      {/* 底部信息区域 - 针对各种设备优化 */}
+      {/* 底部信息区域 - 修复重复显示问题 */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 10 : 0 }}
         transition={{ delay: 3.0, duration: 0.6, ease: "easeOut" }}
         className="relative z-10 pb-2 sm:pb-4"
       >
-        {/* 超小屏幕 (< 375px) - 垂直堆叠 */}
-        <div className="block xs:hidden px-2 space-y-1">
-          <div className="text-center text-gray-400 text-xs">
+        {/* 统一的响应式布局 */}
+        <div className="flex flex-col xs:flex-row justify-between items-center px-3 sm:px-4 md:px-8 gap-1 xs:gap-2">
+          {/* 左侧版权信息 */}
+          <div className="text-gray-400 text-xs sm:text-sm order-1 xs:order-1">
             <TypewriterEffect text="© 2024" delay={300} speed={50} />
           </div>
-          <div className="text-center">
+
+          {/* 中间旧版网页按钮 */}
+          <div className="order-2 xs:order-2">
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs px-2 py-1"
+              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs sm:text-sm px-2 py-1"
               asChild
             >
               <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
-                旧版网页
+                <span className="xs:hidden">旧版</span>
+                <span className="hidden xs:inline">旧版网页</span>
               </a>
             </Button>
           </div>
-          <div className="text-center text-gray-400 text-xs">
-            <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
-          </div>
-        </div>
 
-        {/* 小屏幕 (375px - 640px) - 紧凑水平布局 */}
-        <div className="hidden xs:flex sm:hidden justify-between items-center px-3">
-          <div className="text-gray-400 text-xs flex-shrink-0">
-            <TypewriterEffect text="© 2024" delay={300} speed={50} />
-          </div>
-          <div className="flex-shrink-0 mx-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs px-2 py-1"
-              asChild
-            >
-              <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
-                旧版
-              </a>
-            </Button>
-          </div>
-          <div className="text-gray-400 text-xs flex-shrink-0 text-right">
-            <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
-          </div>
-        </div>
-
-        {/* 中等及以上屏幕 (≥ 640px) - 标准水平布局 */}
-        <div className="hidden sm:flex justify-between items-center px-4 sm:px-8">
-          <div className="text-gray-400 text-xs sm:text-sm">
-            <TypewriterEffect text="© 2024" delay={300} speed={50} />
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs sm:text-sm px-2 py-1"
-            asChild
-          >
-            <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
-              旧版网页
-            </a>
-          </Button>
-          <div className="text-gray-400 text-xs sm:text-sm">
+          {/* 右侧 Powered by */}
+          <div className="text-gray-400 text-xs sm:text-sm order-3 xs:order-3">
             <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
           </div>
         </div>
