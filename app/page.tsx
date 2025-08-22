@@ -491,10 +491,10 @@ export default function Component() {
           {/* 右侧 Powered by */}
           <div className="text-gray-400 text-[10px] xs:text-xs sm:text-sm flex-shrink-0 text-right">
             <span className="sm:hidden">
-              <TypewriterEffect text="Vegcat" delay={300} speed={50} />
+              <TypewriterEffect text="© 2025 Powered by Vegcat" delay={300} speed={50} />
             </span>
             <span className="hidden sm:inline">
-              <TypewriterEffect text="© 2024 Powered by Vegcat" delay={300} speed={50} />
+              <TypewriterEffect text="© 2025 Powered by Vegcat" delay={300} speed={50} />
             </span>
           </div>
         </div>
