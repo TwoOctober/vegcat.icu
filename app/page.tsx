@@ -462,38 +462,40 @@ export default function Component() {
         </div>
       </motion.div>
 
-      {/* 底部信息区域 - 修复重复显示问题 */}
+      {/* 底部信息区域 - 优化水平排列 */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 10 : 0 }}
         transition={{ delay: 3.0, duration: 0.6, ease: "easeOut" }}
         className="relative z-10 pb-2 sm:pb-4"
       >
-        {/* 统一的响应式布局 */}
-        <div className="flex flex-col xs:flex-row justify-between items-center px-3 sm:px-4 md:px-8 gap-1 xs:gap-2">
+        {/* 始终水平排列的响应式布局 */}
+        <div className="flex justify-between items-center px-2 xs:px-3 sm:px-4 md:px-8">
           {/* 左侧版权信息 */}
-          <div className="text-gray-400 text-xs sm:text-sm order-1 xs:order-1">
-            <TypewriterEffect text="© 2024" delay={300} speed={50} />
-          </div>
 
           {/* 中间旧版网页按钮 */}
-          <div className="order-2 xs:order-2">
+          <div className="flex-shrink-0 mx-1 xs:mx-2">
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-xs sm:text-sm px-2 py-1"
+              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-[10px] xs:text-xs sm:text-sm px-1 xs:px-2 py-1 h-auto min-h-0"
               asChild
             >
               <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
-                <span className="xs:hidden">旧版</span>
-                <span className="hidden xs:inline">旧版网页</span>
+                <span className="sm:hidden">旧版网页</span>
+                <span className="hidden sm:inline">旧版网页</span>
               </a>
             </Button>
           </div>
 
           {/* 右侧 Powered by */}
-          <div className="text-gray-400 text-xs sm:text-sm order-3 xs:order-3">
-            <TypewriterEffect text="Powered by Vegcat" delay={300} speed={50} />
+          <div className="text-gray-400 text-[10px] xs:text-xs sm:text-sm flex-shrink-0 text-right">
+            <span className="sm:hidden">
+              <TypewriterEffect text="Vegcat" delay={300} speed={50} />
+            </span>
+            <span className="hidden sm:inline">
+              <TypewriterEffect text="© 2024 Powered by Vegcat" delay={300} speed={50} />
+            </span>
           </div>
         </div>
       </motion.div>
