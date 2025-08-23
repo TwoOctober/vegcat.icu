@@ -411,7 +411,7 @@ export default function Component() {
               {[
                 { icon: BilibiliIcon, label: "Bilibili", href: "https://m.bilibili.com/space/497350955" },
                 { icon: Gamepad2, label: "Steam", href: "https://steamcommunity.com/id/TwoOctober" },
-                { icon: Globe, label: "联系我", href: "http://wpa.qq.com/msgrd?v=3&uin=1145145797&site=qq&menu=yes" },
+                { icon: Globe, label: "联系我", href: "https://qm.qq.com/q/TgHp2AuFCm" },
               ].map((item, index) => (
                 <motion.div
                   key={item.label}
