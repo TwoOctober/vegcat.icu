@@ -11,8 +11,6 @@
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
     "@radix-ui/react-switch": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "latest",

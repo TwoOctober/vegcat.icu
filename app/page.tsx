@@ -180,10 +180,10 @@ function GrayBlackMouseFollowBackground() {
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {/* 主渐变背景 - 灰黑色调 */}
+      {/* 主渐变背景 - 灰黑色调，添加兼容性支持 */}
       <motion.div
         animate={{
-          background: [
+          backgroundImage: [
             "linear-gradient(135deg, #000000 0%, #374151 50%, #111827 100%)",
             "linear-gradient(225deg, #111827 0%, #4b5563 50%, #000000 100%)",
             "linear-gradient(315deg, #000000 0%, #6b7280 50%, #1f2937 100%)",
@@ -197,9 +197,15 @@ function GrayBlackMouseFollowBackground() {
           ease: "easeInOut",
         }}
         className="absolute inset-0"
+        style={{
+          // 添加回退背景色
+          backgroundColor: "#111827",
+          // 添加 webkit 前缀支持
+          WebkitBackgroundImage: "linear-gradient(135deg, #000000 0%, #374151 50%, #111827 100%)",
+        }}
       />
 
-      {/* 主光斑 - 灰色调 */}
+      {/* 主光斑 - 灰色调，优化兼容性 */}
       <motion.div
         animate={{
           x: mousePosition.x - 200,
@@ -213,14 +219,17 @@ function GrayBlackMouseFollowBackground() {
           scale: { duration: 100, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           opacity: { duration: 90, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
         }}
-        className="absolute w-96 h-96 bg-gray-400/10 rounded-full blur-2xl"
+        className="absolute w-96 h-96 rounded-full"
         style={{
           left: 0,
           top: 0,
+          backgroundColor: "rgba(156, 163, 175, 0.1)",
+          filter: "blur(32px)",
+          WebkitFilter: "blur(32px)", // 添加 webkit 前缀
         }}
       />
 
-      {/* 次要光斑 - 深灰色调 */}
+      {/* 次要光斑 - 深灰色调，优化兼容性 */}
       <motion.div
         animate={{
           x: mousePosition.x * 0.2 - 160,
@@ -234,14 +243,17 @@ function GrayBlackMouseFollowBackground() {
           scale: { duration: 120, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           opacity: { duration: 110, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
         }}
-        className="absolute w-80 h-80 bg-gray-500/8 rounded-full blur-2xl"
+        className="absolute w-80 h-80 rounded-full"
         style={{
           right: 0,
           bottom: 0,
+          backgroundColor: "rgba(107, 114, 128, 0.08)",
+          filter: "blur(32px)",
+          WebkitFilter: "blur(32px)", // 添加 webkit 前缀
         }}
       />
 
-      {/* 第三个光斑 - 浅灰色调 */}
+      {/* 第三个光斑 - 浅灰色调，优化兼容性 */}
       <motion.div
         animate={{
           x: -mousePosition.x * 0.1 + (typeof window !== "undefined" ? window.innerWidth / 2 : 400) - 140,
@@ -255,21 +267,25 @@ function GrayBlackMouseFollowBackground() {
           scale: { duration: 140, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           opacity: { duration: 130, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
         }}
-        className="absolute w-72 h-72 bg-gray-300/6 rounded-full blur-2xl"
+        className="absolute w-72 h-72 rounded-full"
         style={{
           left: 0,
           top: 0,
+          backgroundColor: "rgba(209, 213, 219, 0.06)",
+          filter: "blur(32px)",
+          WebkitFilter: "blur(32px)", // 添加 webkit 前缀
         }}
       />
 
-      {/* 极慢的粒子 - 白色调 */}
+      {/* 极慢的粒子 - 白色调，优化兼容性 */}
       {[...Array(3)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-white/10 rounded-full"
+          className="absolute w-1 h-1 rounded-full"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
           }}
           animate={{
             opacity: [0, 0.3, 0],
