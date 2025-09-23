@@ -125,7 +125,7 @@ function SimpleAvatar({ onComplete, isLoading }) {
           <div
             className="absolute inset-0 rounded-full p-1"
             style={{
-              background: "linear-gradient(45deg, #d4a574, #e8c5a0, #f4d4a7, #d4a574)",
+              background: "linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0, #b8956a)",
               backgroundSize: "300% 300%",
               animation: "gradientShift 4s ease infinite",
             }}
@@ -148,89 +148,172 @@ function SimpleAvatar({ onComplete, isLoading }) {
   )
 }
 
-// 温暖风格背景组件
-function WarmBackground() {
+// 响应式温暖背景组件 - 增强兼容性
+function ResponsiveWarmBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [isSupported, setIsSupported] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+  const [browserSupport, setBrowserSupport] = useState({
+    gradient: true,
+    filter: true,
+    backgroundImage: true,
+  })
 
   useEffect(() => {
-    // 检测浏览器支持
-    const testEl = document.createElement("div")
-    testEl.style.background = "linear-gradient(45deg, red, blue)"
-    const isGradientSupported = testEl.style.background !== ""
-    setIsSupported(isGradientSupported)
+    // 检测移动设备
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
 
-    const handleMouseMove = (e) => {
-      requestAnimationFrame(() => {
-        setMousePosition({
-          x: e.clientX,
-          y: e.clientY,
-        })
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    // 全面的浏览器兼容性检测
+    const detectBrowserSupport = () => {
+      const testEl = document.createElement("div")
+
+      // 检测渐变支持
+      testEl.style.background = "linear-gradient(45deg, red, blue)"
+      const gradientSupported = testEl.style.background !== ""
+
+      // 检测filter支持
+      testEl.style.filter = "blur(10px)"
+      testEl.style.webkitFilter = "blur(10px)"
+      const filterSupported = testEl.style.filter !== "" || testEl.style.webkitFilter !== ""
+
+      // 检测background-image支持
+      testEl.style.backgroundImage =
+        "url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"
+      const backgroundImageSupported = testEl.style.backgroundImage !== ""
+
+      setBrowserSupport({
+        gradient: gradientSupported,
+        filter: filterSupported,
+        backgroundImage: backgroundImageSupported,
       })
     }
 
+    detectBrowserSupport()
+
+    const handleMouseMove = (e) => {
+      if (browserSupport.filter) {
+        requestAnimationFrame(() => {
+          setMousePosition({
+            x: e.clientX,
+            y: e.clientY,
+          })
+        })
+      }
+    }
+
     window.addEventListener("mousemove", handleMouseMove, { passive: true })
-    return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [])
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove)
+      window.removeEventListener("resize", checkMobile)
+    }
+  }, [browserSupport.filter])
+
+  // 回退样式
+  const fallbackStyle = {
+    backgroundColor: "#8b6f47",
+    backgroundImage: browserSupport.gradient
+      ? "radial-gradient(circle at 25% 25%, #b8956a 0%, transparent 50%), radial-gradient(circle at 75% 75%, #d4a574 0%, transparent 50%)"
+      : "none",
+  }
+
+  // 选择背景图片
+  const desktopBg =
+    "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8ho0o-qNZfpecYx-loV1Ij3gF6BmgACYRkAApqnmFZH3mnkoy1eyzYE.jpg"
+  const mobileBg =
+    "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8xo0pFTN0Yp1H_7zL3pzPQX1c0JTwACZRkAApqnmFYYPck9JMXOrTYE.jpg"
+  const backgroundImage = isMobile ? mobileBg : desktopBg
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {/* 背景图片 */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage:
-            "url('https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8ho0o-qNZfpecYx-loV1Ij3gF6BmgACYRkAApqnmFZH3mnkoy1eyzYE.jpg')",
-        }}
-      />
-
-      {/* 温暖色调覆盖层 */}
+      {/* 背景图片层 - 增强兼容性 */}
       <div
         className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(212, 165, 116, 0.3) 0%, rgba(244, 212, 167, 0.2) 50%, rgba(232, 197, 160, 0.3) 100%)",
-        }}
+        style={
+          browserSupport.backgroundImage
+            ? {
+                backgroundImage: `url('${backgroundImage}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                // IE兼容性
+                filter:
+                  "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" +
+                  backgroundImage +
+                  "', sizingMethod='scale')",
+              }
+            : fallbackStyle
+        }
+      />
+
+      {/* 温暖色调覆盖层 - 多重兼容性 */}
+      <div
+        className="absolute inset-0"
+        style={
+          browserSupport.gradient
+            ? {
+                background:
+                  "linear-gradient(135deg, rgba(184, 149, 106, 0.25) 0%, rgba(212, 165, 116, 0.15) 50%, rgba(232, 197, 160, 0.25) 100%)",
+                // 添加IE兼容性
+                filter:
+                  "progid:DXImageTransform.Microsoft.gradient(startColorstr='#40b8956a', endColorstr='#40e8c5a0', GradientType=1)",
+              }
+            : {
+                backgroundColor: "rgba(184, 149, 106, 0.2)",
+              }
+        }
       />
 
       {/* 深色遮罩 - 确保文字可读性 */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundColor: "rgba(0, 0, 0, 0.4)",
+          backgroundColor: "rgba(0, 0, 0, 0.45)",
+          // IE兼容性
+          filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=45)",
         }}
       />
 
-      {/* 温暖光斑效果 */}
-      <motion.div
-        className="absolute w-96 h-96 rounded-full opacity-10"
-        style={{
-          left: mousePosition.x - 200,
-          top: mousePosition.y - 200,
-          background: "radial-gradient(circle, #d4a574 0%, transparent 70%)",
-          filter: "blur(40px)",
-          WebkitFilter: "blur(40px)",
-        }}
-        transition={{
-          x: { type: "spring", stiffness: 50, damping: 30 },
-          y: { type: "spring", stiffness: 50, damping: 30 },
-        }}
-      />
+      {/* 温暖光斑效果 - 仅在支持的浏览器中显示 */}
+      {browserSupport.filter && (
+        <>
+          <motion.div
+            className="absolute w-96 h-96 rounded-full"
+            style={{
+              left: mousePosition.x - 200,
+              top: mousePosition.y - 200,
+              background: "radial-gradient(circle, rgba(184, 149, 106, 0.08) 0%, transparent 70%)",
+              filter: "blur(40px)",
+              WebkitFilter: "blur(40px)",
+              opacity: 0.6,
+            }}
+            transition={{
+              x: { type: "spring", stiffness: 50, damping: 30 },
+              y: { type: "spring", stiffness: 50, damping: 30 },
+            }}
+          />
 
-      <motion.div
-        className="absolute w-80 h-80 rounded-full opacity-8"
-        style={{
-          left: mousePosition.x * 0.3 - 160,
-          top: mousePosition.y * 0.3 - 160,
-          background: "radial-gradient(circle, #e8c5a0 0%, transparent 70%)",
-          filter: "blur(35px)",
-          WebkitFilter: "blur(35px)",
-        }}
-        transition={{
-          x: { type: "spring", stiffness: 30, damping: 40 },
-          y: { type: "spring", stiffness: 30, damping: 40 },
-        }}
-      />
+          <motion.div
+            className="absolute w-80 h-80 rounded-full"
+            style={{
+              left: mousePosition.x * 0.3 - 160,
+              top: mousePosition.y * 0.3 - 160,
+              background: "radial-gradient(circle, rgba(212, 165, 116, 0.06) 0%, transparent 70%)",
+              filter: "blur(35px)",
+              WebkitFilter: "blur(35px)",
+              opacity: 0.5,
+            }}
+            transition={{
+              x: { type: "spring", stiffness: 30, damping: 40 },
+              y: { type: "spring", stiffness: 30, damping: 40 },
+            }}
+          />
+        </>
+      )}
     </div>
   )
 }
@@ -249,7 +332,10 @@ function SimpleLoadingAnimation({ onComplete }) {
       transition={{ duration: 0.3 }}
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{
-        background: "linear-gradient(135deg, #d4a574 0%, #e8c5a0 100%)",
+        background: "linear-gradient(135deg, #b8956a 0%, #d4a574 100%)",
+        // IE兼容性
+        filter:
+          "progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8956a', endColorstr='#d4a574', GradientType=1)",
       }}
     >
       <div className="text-center space-y-6">
@@ -306,7 +392,7 @@ export default function Component() {
 
   return (
     <>
-      {/* 内联CSS动画 */}
+      {/* 内联CSS动画 - 增强兼容性 */}
       <style jsx>{`
         @keyframes gradientShift {
           0% { background-position: 0% 50%; }
@@ -315,19 +401,36 @@ export default function Component() {
         }
         .warm-text {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
         }
         .warm-button {
-          background: linear-gradient(45deg, #d4a574, #e8c5a0);
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+          background: linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
+          background: -webkit-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
+          background: -moz-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
+          background: -o-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
+          background: -ms-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
+          border: 2px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 4px 15px rgba(166, 124, 82, 0.25);
           transition: all 0.3s ease;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+          /* IE兼容性 */
+          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a67c52', endColorstr='#d4a574', GradientType=1);
         }
         .warm-button:hover {
-          box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+          box-shadow: 0 6px 20px rgba(166, 124, 82, 0.35);
           transform: translateY(-2px);
-          background: linear-gradient(45deg, #e8c5a0, #f4d4a7);
+          background: linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
+          background: -webkit-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
+          background: -moz-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
+          background: -o-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
+          background: -ms-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
+          /* IE兼容性 */
+          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8956a', endColorstr='#e8c5a0', GradientType=1);
+        }
+        /* IE特殊处理 */
+        .ie-fallback {
+          background-color: #b8956a !important;
+          background-image: none !important;
         }
       `}</style>
 
@@ -337,8 +440,8 @@ export default function Component() {
           {isLoading && <SimpleLoadingAnimation onComplete={() => setIsLoading(false)} />}
         </AnimatePresence>
 
-        {/* 温暖风格背景 */}
-        <WarmBackground />
+        {/* 响应式温暖背景 */}
+        <ResponsiveWarmBackground />
 
         {/* 主内容区域 */}
         <motion.div
@@ -383,7 +486,7 @@ export default function Component() {
                 </AnimatePresence>
               </motion.div>
 
-              {/* 简洁按钮 */}
+              {/* 暗色调渐变按钮 */}
               <motion.div
                 transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
                 className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 pt-6"
