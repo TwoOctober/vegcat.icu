@@ -78,7 +78,7 @@ function TypewriterEffect({
   )
 }
 
-// 更大的响应式头像组件
+// 更大的移动端头像组件
 function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
   const [currentRotation, setCurrentRotation] = useState(0)
   const [animationKey, setAnimationKey] = useState(0)
@@ -110,10 +110,10 @@ function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
     return () => clearTimeout(timer)
   }, [onComplete])
 
-  // 更大的头像尺寸
+  // 移动端头像更大
   const avatarSize = isMobile
-    ? "w-44 h-44 sm:w-52 sm:h-52" // 移动端更大
-    : "w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72" // 桌面端也更大
+    ? "w-52 h-52 sm:w-60 sm:h-60" // 移动端显著增大
+    : "w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72"
 
   return (
     <motion.div
@@ -137,7 +137,7 @@ function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
         }}
         transition={{
           duration: 1.5,
-          ease: [0.4, 0, 0.2, 1], // 更优雅的缓动
+          ease: [0.4, 0, 0.2, 1],
         }}
         className="relative"
       >
@@ -147,7 +147,7 @@ function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
             style={{
               background: "linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0, #b8956a)",
               backgroundSize: "300% 300%",
-              animation: "gradientShift 5s ease infinite", // 稍微慢一点
+              animation: "gradientShift 5s ease infinite",
             }}
           >
             <div className="w-full h-full rounded-full overflow-hidden bg-black">
@@ -372,7 +372,7 @@ export default function Component() {
       hoverTimeoutRef.current = setTimeout(() => {
         setIsHoveringAvatar(false)
         setDisplayedDescription("漫无止境的八月循环了多少次")
-      }, 2500) // 稍微长一点
+      }, 2500)
     } else {
       setIsHoveringAvatar(false)
       setDisplayedDescription("漫无止境的八月循环了多少次")
@@ -392,63 +392,101 @@ export default function Component() {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
           text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
-        .warm-button {
-          background: #a67c52;
-          background: linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
-          border: 2px solid rgba(255, 255, 255, 0.15);
+        
+        /* 丰富的按钮颜色 */
+        .warm-button-bilibili {
+          background: linear-gradient(135deg, #ff6b9d 0%, #ff8e8e 50%, #ffa8a8 100%);
+          border: 2px solid rgba(255, 255, 255, 0.2);
           border-radius: 8px;
-          box-shadow: 0 4px 20px rgba(166, 124, 82, 0.25);
+          box-shadow: 0 4px 20px rgba(255, 107, 157, 0.3);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
         }
-        .warm-button:hover {
-          box-shadow: 0 8px 25px rgba(166, 124, 82, 0.4);
+        .warm-button-bilibili:hover {
+          box-shadow: 0 8px 25px rgba(255, 107, 157, 0.5);
           transform: translateY(-3px);
-          background: linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
-          border-color: rgba(255, 255, 255, 0.25);
+          background: linear-gradient(135deg, #ff8eb3 0%, #ffa4a4 50%, #ffbebe 100%);
         }
-        .warm-button:active {
-          transform: translateY(-1px);
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        .warm-button-steam {
+          background: linear-gradient(135deg, #4a90e2 0%, #5ba3f5 50%, #6bb6ff 100%);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-radius: 8px;
+          box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         }
-        /* 移动端优化 */
+        .warm-button-steam:hover {
+          box-shadow: 0 8px 25px rgba(74, 144, 226, 0.5);
+          transform: translateY(-3px);
+          background: linear-gradient(135deg, #60a0f2 0%, #71b3ff 50%, #81c6ff 100%);
+        }
+        
+        .warm-button-contact {
+          background: linear-gradient(135deg, #50c878 0%, #66d68a 50%, #7ce49c 100%);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-radius: 8px;
+          box-shadow: 0 4px 20px rgba(80, 200, 120, 0.3);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        }
+        .warm-button-contact:hover {
+          box-shadow: 0 8px 25px rgba(80, 200, 120, 0.5);
+          transform: translateY(-3px);
+          background: linear-gradient(135deg, #66d68a 0%, #7ce49c 50%, #92f2ae 100%);
+        }
+        
+        /* 移动端按钮优化 - 更短 */
         @media (max-width: 768px) {
           .mobile-button {
             width: auto !important;
-            min-width: 100px !important; /* 缩短一点 */
-            max-width: 140px !important; /* 缩短一点 */
-            padding: 10px 16px !important;
-            font-size: 14px !important;
+            min-width: 85px !important; /* 进一步缩短 */
+            max-width: 120px !important; /* 进一步缩短 */
+            padding: 10px 14px !important;
+            font-size: 13px !important;
           }
-          /* 确保移动端内容在一屏内 */
-          .mobile-container {
+        }
+        
+        /* 桌面端按钮优化 - 更宽更矮 */
+        @media (min-width: 769px) {
+          .desktop-button {
+            min-width: 140px !important; /* 加宽 */
+            padding: 10px 24px !important; /* 垂直缩短，水平加宽 */
+          }
+        }
+        
+        /* 移动端布局修复 */
+        @media (max-width: 768px) {
+          .mobile-layout {
             min-height: 100vh;
-            min-height: 100dvh; /* 动态视口高度 */
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+          }
+          .mobile-main {
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding: 1rem;
           }
-          .mobile-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            max-height: 100vh;
-            max-height: 100dvh;
+          .mobile-footer {
+            flex-shrink: 0;
+            margin-top: auto;
           }
         }
+        
         /* 老旧浏览器回退 */
-        .legacy-browser .warm-button {
+        .legacy-browser .warm-button-bilibili,
+        .legacy-browser .warm-button-steam,
+        .legacy-browser .warm-button-contact {
           background: #b8956a !important;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
         }
       `}</style>
 
       <div
-        className={`text-white relative overflow-hidden ${isMobile ? "mobile-container" : "min-h-screen flex flex-col"}`}
+        className={`text-white relative overflow-hidden ${isMobile ? "mobile-layout" : "min-h-screen flex flex-col"}`}
       >
         {/* 优雅加载动画 */}
         <AnimatePresence>
@@ -458,7 +496,7 @@ export default function Component() {
         {/* 简化兼容背景 */}
         <SimplifiedCompatibleBackground />
 
-        {/* 主内容区域 - 移动端优化 */}
+        {/* 主内容区域 - 移动端布局修复 */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 40 : 0 }}
@@ -467,10 +505,10 @@ export default function Component() {
             duration: 0.8,
             ease: [0.4, 0, 0.2, 1],
           }}
-          className={`relative z-10 ${isMobile ? "mobile-content" : "flex-1 flex items-center justify-center px-4 sm:px-8 py-4 sm:py-8"}`}
+          className={`relative z-10 ${isMobile ? "mobile-main" : "flex-1 flex items-center justify-center px-4 sm:px-8 py-4 sm:py-8"}`}
         >
           <div className="max-w-4xl w-full">
-            <div className={`text-center ${isMobile ? "space-y-3" : "space-y-4 sm:space-y-6"}`}>
+            <div className={`text-center ${isMobile ? "space-y-4" : "space-y-4 sm:space-y-6"}`}>
               {/* 更大的响应式头像 */}
               <motion.div
                 className="flex justify-center"
@@ -490,10 +528,10 @@ export default function Component() {
                 <EnhancedResponsiveAvatar onComplete={() => {}} isLoading={isLoading} />
               </motion.div>
 
-              {/* 响应式域名标注 */}
+              {/* 响应式域名标注 - 移动端更大 */}
               <motion.div
                 className={`warm-text font-medium ${
-                  isMobile ? "text-2xl sm:text-3xl" : "text-xl sm:text-2xl lg:text-3xl"
+                  isMobile ? "text-3xl sm:text-4xl" : "text-xl sm:text-2xl lg:text-3xl"
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
@@ -506,10 +544,10 @@ export default function Component() {
                 <TypewriterEffect text="Vegcat.icu" delay={600} speed={90} />
               </motion.div>
 
-              {/* 描述文字 */}
+              {/* 描述文字 - 移动端更大 */}
               <motion.div
                 className={`max-w-lg leading-relaxed mx-auto warm-text ${
-                  isMobile ? "text-base sm:text-lg px-4" : "text-lg sm:text-xl lg:text-2xl"
+                  isMobile ? "text-xl sm:text-2xl px-4" : "text-lg sm:text-xl lg:text-2xl"
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
@@ -540,9 +578,9 @@ export default function Component() {
                 </AnimatePresence>
               </motion.div>
 
-              {/* 优化的矩形按钮 */}
+              {/* 彩色矩形按钮 - 响应式尺寸 */}
               <motion.div
-                className={`flex flex-col sm:flex-row flex-wrap justify-center gap-3 ${isMobile ? "pt-4" : "pt-6"}`}
+                className={`flex flex-col sm:flex-row flex-wrap justify-center gap-3 ${isMobile ? "pt-5" : "pt-6"}`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 30 : 0 }}
                 transition={{
@@ -556,16 +594,19 @@ export default function Component() {
                     icon: BilibiliIcon,
                     label: "Bilibili",
                     href: "https://m.bilibili.com/space/497350955",
+                    className: "warm-button-bilibili",
                   },
                   {
                     icon: Gamepad2,
                     label: "Steam",
                     href: "https://steamcommunity.com/id/TwoOctober",
+                    className: "warm-button-steam",
                   },
                   {
                     icon: Globe,
                     label: "联系我",
                     href: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh75o0o28biX4Bx8LpQABB9kt0kAgYhkAAlYZAAKap5hWhIUMoKRTIr42BA.jpg",
+                    className: "warm-button-contact",
                   },
                 ].map((item, index) => (
                   <motion.div
@@ -586,14 +627,14 @@ export default function Component() {
                       scale: 0.95,
                       transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] },
                     }}
-                    className={isMobile ? "mobile-button" : "w-full sm:w-auto"}
+                    className={isMobile ? "mobile-button" : "desktop-button w-full sm:w-auto"}
                   >
                     <a
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`warm-button block text-center no-underline text-white font-medium ${
-                        isMobile ? "px-4 py-2.5 text-sm" : "w-full sm:w-auto px-6 py-3"
+                      className={`${item.className} block text-center no-underline text-white font-medium ${
+                        isMobile ? "px-3 py-2.5 text-sm" : "w-full sm:w-auto px-6 py-2.5"
                       }`}
                     >
                       <span className="flex items-center justify-center">
@@ -609,7 +650,7 @@ export default function Component() {
           </div>
         </motion.div>
 
-        {/* 底部信息 - 移动端优化 */}
+        {/* 底部信息 - 移动端固定在底部 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
@@ -618,7 +659,7 @@ export default function Component() {
             duration: 0.6,
             ease: [0.4, 0, 0.2, 1],
           }}
-          className={`relative z-10 ${isMobile ? "pb-2" : "pb-4"}`}
+          className={`relative z-10 ${isMobile ? "mobile-footer pb-3" : "pb-4"}`}
         >
           <div className={`flex justify-between items-center ${isMobile ? "px-4 text-xs" : "px-4 sm:px-8"}`}>
             <div className="flex-shrink-0">
