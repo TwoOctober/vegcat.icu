@@ -427,7 +427,7 @@ export default function Component() {
               {[
                 { icon: BilibiliIcon, label: "Bilibili", href: "https://m.bilibili.com/space/497350955" },
                 { icon: Gamepad2, label: "Steam", href: "https://steamcommunity.com/id/TwoOctober" },
-                { icon: Globe, label: "联系我", href: "https://qm.qq.com/q/TgHp2AuFCm" },
+                { icon: Globe, label: "联系我", href: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh75o0o28biX4Bx8LpQABB9kt0kAgYhkAAlYZAAKap5hWhIUMoKRTIr42BA.jpg" },
               ].map((item, index) => (
                 <motion.div
                   key={item.label}
