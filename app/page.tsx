@@ -78,8 +78,8 @@ function TypewriterEffect({
   )
 }
 
-// 响应式头像组件 - 移动端优化
-function ResponsiveAvatar({ onComplete, isLoading }) {
+// 更大的响应式头像组件
+function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
   const [currentRotation, setCurrentRotation] = useState(0)
   const [animationKey, setAnimationKey] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
@@ -110,10 +110,10 @@ function ResponsiveAvatar({ onComplete, isLoading }) {
     return () => clearTimeout(timer)
   }, [onComplete])
 
-  // 移动端更大的头像尺寸
+  // 更大的头像尺寸
   const avatarSize = isMobile
-    ? "w-40 h-40 sm:w-48 sm:h-48"
-    : "w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64"
+    ? "w-44 h-44 sm:w-52 sm:h-52" // 移动端更大
+    : "w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72" // 桌面端也更大
 
   return (
     <motion.div
@@ -121,8 +121,14 @@ function ResponsiveAvatar({ onComplete, isLoading }) {
       onMouseEnter={handleInteraction}
       onTouchStart={handleInteraction}
       onClick={handleInteraction}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{
+        scale: 1.03,
+        transition: { duration: 0.4, ease: "easeOut" },
+      }}
+      whileTap={{
+        scale: 0.97,
+        transition: { duration: 0.2, ease: "easeOut" },
+      }}
     >
       <motion.div
         key={animationKey}
@@ -130,8 +136,8 @@ function ResponsiveAvatar({ onComplete, isLoading }) {
           rotate: currentRotation,
         }}
         transition={{
-          duration: 1.2,
-          ease: "easeOut",
+          duration: 1.5,
+          ease: [0.4, 0, 0.2, 1], // 更优雅的缓动
         }}
         className="relative"
       >
@@ -141,7 +147,7 @@ function ResponsiveAvatar({ onComplete, isLoading }) {
             style={{
               background: "linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0, #b8956a)",
               backgroundSize: "300% 300%",
-              animation: "gradientShift 4s ease infinite",
+              animation: "gradientShift 5s ease infinite", // 稍微慢一点
             }}
           >
             <div className="w-full h-full rounded-full overflow-hidden bg-black">
@@ -162,22 +168,14 @@ function ResponsiveAvatar({ onComplete, isLoading }) {
   )
 }
 
-// 增强兼容性的响应式背景组件
-function EnhancedResponsiveBackground() {
+// 简化的老旧浏览器兼容背景组件
+function SimplifiedCompatibleBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [delayedMousePosition, setDelayedMousePosition] = useState({ x: 0, y: 0 })
   const [isMobile, setIsMobile] = useState(false)
-  const [browserInfo, setBrowserInfo] = useState({
-    is360: false,
-    isIE: false,
-    isOldChrome: false,
-    supportsGradient: true,
-    supportsFilter: true,
-    supportsBackgroundImage: true,
-  })
+  const [canUseAdvancedEffects, setCanUseAdvancedEffects] = useState(false)
 
   useEffect(() => {
-    // 检测移动设备
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768)
     }
@@ -185,64 +183,31 @@ function EnhancedResponsiveBackground() {
     checkMobile()
     window.addEventListener("resize", checkMobile)
 
-    // 增强的浏览器检测
-    const detectBrowser = () => {
-      const userAgent = navigator.userAgent.toLowerCase()
+    // 简化的浏览器能力检测
+    const checkAdvancedSupport = () => {
       const testEl = document.createElement("div")
+      testEl.style.filter = "blur(1px)"
+      const supportsFilter = testEl.style.filter !== ""
 
-      // 检测360浏览器
-      const is360 =
-        userAgent.includes("360") ||
-        userAgent.includes("qihu") ||
-        userAgent.includes("360se") ||
-        userAgent.includes("360ee") ||
-        /360\w+/i.test(userAgent)
+      const userAgent = navigator.userAgent.toLowerCase()
+      const isModernBrowser =
+        !userAgent.includes("msie") && !userAgent.includes("trident") && !userAgent.includes("360") && supportsFilter
 
-      // 检测IE浏览器
-      const isIE = userAgent.includes("msie") || userAgent.includes("trident") || /edge\/\d+/i.test(userAgent)
-
-      // 检测旧版Chrome
-      const chromeMatch = userAgent.match(/chrome\/(\d+)/)
-      const isOldChrome = chromeMatch && Number.parseInt(chromeMatch[1]) < 50
-
-      // 检测渐变支持
-      testEl.style.background = "linear-gradient(45deg, red, blue)"
-      testEl.style.background = "-webkit-linear-gradient(45deg, red, blue)"
-      testEl.style.background = "-moz-linear-gradient(45deg, red, blue)"
-      const supportsGradient = testEl.style.background !== ""
-
-      // 检测滤镜支持
-      testEl.style.filter = "blur(10px)"
-      testEl.style.webkitFilter = "blur(10px)"
-      const supportsFilter = testEl.style.filter !== "" || testEl.style.webkitFilter !== ""
-
-      // 检测背景图片支持
-      testEl.style.backgroundImage =
-        "url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"
-      const supportsBackgroundImage = testEl.style.backgroundImage !== ""
-
-      setBrowserInfo({
-        is360,
-        isIE,
-        isOldChrome,
-        supportsGradient,
-        supportsFilter,
-        supportsBackgroundImage,
-      })
+      setCanUseAdvancedEffects(isModernBrowser)
     }
 
-    detectBrowser()
+    checkAdvancedSupport()
 
-    // 鼠标移动事件 - 添加延迟效果
+    // 鼠标移动事件 - 仅现代浏览器
     const handleMouseMove = (e) => {
-      if (browserInfo.supportsFilter && !isMobile) {
+      if (canUseAdvancedEffects && !isMobile) {
         const newPosition = { x: e.clientX, y: e.clientY }
         setMousePosition(newPosition)
 
-        // 延迟更新光影位置
+        // 更优雅的延迟
         setTimeout(() => {
           setDelayedMousePosition(newPosition)
-        }, 150)
+        }, 200)
       }
     }
 
@@ -252,7 +217,7 @@ function EnhancedResponsiveBackground() {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("resize", checkMobile)
     }
-  }, [browserInfo.supportsFilter, isMobile])
+  }, [canUseAdvancedEffects, isMobile])
 
   // 选择背景图片
   const desktopBg =
@@ -261,106 +226,67 @@ function EnhancedResponsiveBackground() {
     "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8xo0pFTN0Yp1H_7zL3pzPQX1c0JTwACZRkAApqnmFYYPck9JMXOrTYE.jpg"
   const backgroundImage = isMobile ? mobileBg : desktopBg
 
-  // 360浏览器和IE的特殊处理
-  const getBackgroundStyle = () => {
-    if (browserInfo.is360 || browserInfo.isIE || browserInfo.isOldChrome) {
-      // 360浏览器使用更简单的背景方案
-      return {
-        backgroundColor: "#8b6f47",
-        backgroundImage: browserInfo.supportsBackgroundImage ? `url('${backgroundImage}')` : "none",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed", // 360浏览器兼容性
-      }
-    }
-
-    if (browserInfo.supportsBackgroundImage) {
-      return {
-        backgroundImage: `url('${backgroundImage}')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }
-    }
-
-    return {
-      backgroundColor: "#8b6f47",
-      backgroundImage: browserInfo.supportsGradient
-        ? "radial-gradient(circle at 25% 25%, #b8956a 0%, transparent 50%), radial-gradient(circle at 75% 75%, #d4a574 0%, transparent 50%)"
-        : "none",
-    }
-  }
-
-  // 覆盖层样式
-  const getOverlayStyle = () => {
-    if (browserInfo.is360 || browserInfo.isIE) {
-      return {
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        // IE兼容性
-        filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=50)",
-      }
-    }
-
-    return browserInfo.supportsGradient
-      ? {
-          background:
-            "linear-gradient(135deg, rgba(184, 149, 106, 0.25) 0%, rgba(212, 165, 116, 0.15) 50%, rgba(232, 197, 160, 0.25) 100%)",
-        }
-      : {
-          backgroundColor: "rgba(184, 149, 106, 0.2)",
-        }
-  }
-
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {/* 背景图片层 */}
-      <div className="absolute inset-0" style={getBackgroundStyle()} />
-
-      {/* 温暖色调覆盖层 */}
-      <div className="absolute inset-0" style={getOverlayStyle()} />
-
-      {/* 深色遮罩 */}
+      {/* 简化的背景图片层 - 老旧浏览器兼容 */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundColor: "rgba(0, 0, 0, 0.45)",
-          filter: browserInfo.isIE ? "progid:DXImageTransform.Microsoft.Alpha(opacity=45)" : "none",
+          backgroundColor: "#8b6f47", // 回退颜色
+          backgroundImage: `url('${backgroundImage}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
         }}
       />
 
-      {/* 延迟光影效果 - 仅在支持的浏览器中显示 */}
-      {browserInfo.supportsFilter && !browserInfo.is360 && !browserInfo.isIE && !isMobile && (
+      {/* 简化的温暖覆盖层 */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundColor: "rgba(184, 149, 106, 0.2)",
+        }}
+      />
+
+      {/* 深色遮罩 - 确保文字可读性 */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.4)",
+        }}
+      />
+
+      {/* 优雅的光影效果 - 仅现代浏览器 */}
+      {canUseAdvancedEffects && !isMobile && (
         <>
           <motion.div
             className="absolute w-96 h-96 rounded-full"
             style={{
               left: delayedMousePosition.x - 200,
               top: delayedMousePosition.y - 200,
-              background: "radial-gradient(circle, rgba(184, 149, 106, 0.08) 0%, transparent 70%)",
-              filter: "blur(40px)",
-              WebkitFilter: "blur(40px)",
-              opacity: 0.6,
+              background: "radial-gradient(circle, rgba(184, 149, 106, 0.06) 0%, transparent 70%)",
+              filter: "blur(50px)",
+              opacity: 0.8,
             }}
             transition={{
-              x: { type: "spring", stiffness: 30, damping: 50 },
-              y: { type: "spring", stiffness: 30, damping: 50 },
+              x: { type: "spring", stiffness: 20, damping: 80 },
+              y: { type: "spring", stiffness: 20, damping: 80 },
             }}
           />
 
           <motion.div
             className="absolute w-80 h-80 rounded-full"
             style={{
-              left: delayedMousePosition.x * 0.3 - 160,
-              top: delayedMousePosition.y * 0.3 - 160,
-              background: "radial-gradient(circle, rgba(212, 165, 116, 0.06) 0%, transparent 70%)",
-              filter: "blur(35px)",
-              WebkitFilter: "blur(35px)",
-              opacity: 0.5,
+              left: delayedMousePosition.x * 0.2 - 160,
+              top: delayedMousePosition.y * 0.2 - 160,
+              background: "radial-gradient(circle, rgba(212, 165, 116, 0.04) 0%, transparent 70%)",
+              filter: "blur(40px)",
+              opacity: 0.6,
             }}
             transition={{
-              x: { type: "spring", stiffness: 20, damping: 60 },
-              y: { type: "spring", stiffness: 20, damping: 60 },
+              x: { type: "spring", stiffness: 15, damping: 100 },
+              y: { type: "spring", stiffness: 15, damping: 100 },
             }}
           />
         </>
@@ -369,40 +295,45 @@ function EnhancedResponsiveBackground() {
   )
 }
 
-// 简洁加载动画
-function SimpleLoadingAnimation({ onComplete }) {
+// 优雅的加载动画
+function ElegantLoadingAnimation({ onComplete }) {
   useEffect(() => {
-    const timer = setTimeout(onComplete, 400)
+    const timer = setTimeout(onComplete, 500)
     return () => clearTimeout(timer)
   }, [onComplete])
 
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      exit={{
+        opacity: 0,
+        scale: 1.1,
+        transition: { duration: 0.5, ease: "easeOut" },
+      }}
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{
-        background: "linear-gradient(135deg, #b8956a 0%, #d4a574 100%)",
-        filter:
-          "progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8956a', endColorstr='#d4a574', GradientType=1)",
+        backgroundColor: "#b8956a",
       }}
     >
-      <div className="text-center space-y-6">
+      <div className="text-center space-y-8">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{
-            duration: 1,
+            duration: 1.5,
             repeat: Number.POSITIVE_INFINITY,
             ease: "linear",
           }}
-          className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full mx-auto"
+          className="w-10 h-10 border-3 border-white/20 border-t-white rounded-full mx-auto"
         />
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-          className="text-white text-lg font-medium"
+          transition={{
+            delay: 0.2,
+            duration: 0.6,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+          className="text-white text-xl font-light tracking-wide"
         >
           Loading...
         </motion.div>
@@ -441,7 +372,7 @@ export default function Component() {
       hoverTimeoutRef.current = setTimeout(() => {
         setIsHoveringAvatar(false)
         setDisplayedDescription("漫无止境的八月循环了多少次")
-      }, 2000)
+      }, 2500) // 稍微长一点
     } else {
       setIsHoveringAvatar(false)
       setDisplayedDescription("漫无止境的八月循环了多少次")
@@ -450,7 +381,7 @@ export default function Component() {
 
   return (
     <>
-      {/* 增强的CSS样式 - 360浏览器兼容 */}
+      {/* 优化的CSS样式 */}
       <style jsx>{`
         @keyframes gradientShift {
           0% { background-position: 0% 50%; }
@@ -459,118 +390,166 @@ export default function Component() {
         }
         .warm-text {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+          text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
         .warm-button {
+          background: #a67c52;
           background: linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
-          background: -webkit-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
-          background: -moz-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
-          background: -o-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
-          background: -ms-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
           border: 2px solid rgba(255, 255, 255, 0.15);
-          border-radius: 8px; /* 小圆角矩形 */
-          box-shadow: 0 4px 15px rgba(166, 124, 82, 0.25);
-          transition: all 0.3s ease;
+          border-radius: 8px;
+          box-shadow: 0 4px 20px rgba(166, 124, 82, 0.25);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-          /* 360浏览器兼容性 */
-          -webkit-border-radius: 8px;
-          -moz-border-radius: 8px;
-          /* IE兼容性 */
-          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a67c52', endColorstr='#d4a574', GradientType=1);
-          behavior: url(PIE.htc); /* IE6-8 圆角支持 */
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
         }
         .warm-button:hover {
-          box-shadow: 0 6px 20px rgba(166, 124, 82, 0.35);
-          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(166, 124, 82, 0.4);
+          transform: translateY(-3px);
           background: linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
-          background: -webkit-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
-          background: -moz-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
-          background: -o-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
-          background: -ms-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
-          /* IE兼容性 */
-          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8956a', endColorstr='#e8c5a0', GradientType=1);
+          border-color: rgba(255, 255, 255, 0.25);
         }
-        /* 移动端按钮优化 */
+        .warm-button:active {
+          transform: translateY(-1px);
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* 移动端优化 */
         @media (max-width: 768px) {
           .mobile-button {
             width: auto !important;
-            min-width: 120px;
-            max-width: 160px;
-            padding: 12px 20px !important;
+            min-width: 100px !important; /* 缩短一点 */
+            max-width: 140px !important; /* 缩短一点 */
+            padding: 10px 16px !important;
+            font-size: 14px !important;
+          }
+          /* 确保移动端内容在一屏内 */
+          .mobile-container {
+            min-height: 100vh;
+            min-height: 100dvh; /* 动态视口高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 1rem;
+          }
+          .mobile-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100vh;
+            max-height: 100dvh;
           }
         }
-        /* 360浏览器特殊处理 */
-        .browser-360 .warm-button {
-          background-color: #b8956a !important;
-          background-image: none !important;
-        }
-        /* IE特殊处理 */
-        .ie-fallback {
-          background-color: #b8956a !important;
-          background-image: none !important;
+        /* 老旧浏览器回退 */
+        .legacy-browser .warm-button {
+          background: #b8956a !important;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
         }
       `}</style>
 
-      <div className="min-h-screen text-white relative overflow-hidden flex flex-col">
-        {/* 加载动画 */}
+      <div
+        className={`text-white relative overflow-hidden ${isMobile ? "mobile-container" : "min-h-screen flex flex-col"}`}
+      >
+        {/* 优雅加载动画 */}
         <AnimatePresence>
-          {isLoading && <SimpleLoadingAnimation onComplete={() => setIsLoading(false)} />}
+          {isLoading && <ElegantLoadingAnimation onComplete={() => setIsLoading(false)} />}
         </AnimatePresence>
 
-        {/* 增强兼容性背景 */}
-        <EnhancedResponsiveBackground />
+        {/* 简化兼容背景 */}
+        <SimplifiedCompatibleBackground />
 
-        {/* 主内容区域 */}
+        {/* 主内容区域 - 移动端优化 */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 30 : 0 }}
-          transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}
-          className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-8 py-4 sm:py-8"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 40 : 0 }}
+          transition={{
+            delay: 0.2,
+            duration: 0.8,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+          className={`relative z-10 ${isMobile ? "mobile-content" : "flex-1 flex items-center justify-center px-4 sm:px-8 py-4 sm:py-8"}`}
         >
           <div className="max-w-4xl w-full">
-            <div className="text-center space-y-4 sm:space-y-6">
-              {/* 响应式头像 */}
-              <div
+            <div className={`text-center ${isMobile ? "space-y-3" : "space-y-4 sm:space-y-6"}`}>
+              {/* 更大的响应式头像 */}
+              <motion.div
                 className="flex justify-center"
                 onMouseEnter={() => handleAvatarHover(true)}
                 onMouseLeave={() => handleAvatarHover(false)}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{
+                  scale: isLoading ? 0.8 : 1,
+                  opacity: isLoading ? 0 : 1,
+                }}
+                transition={{
+                  delay: 0.4,
+                  duration: 0.8,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
               >
-                <ResponsiveAvatar onComplete={() => {}} isLoading={isLoading} />
-              </div>
+                <EnhancedResponsiveAvatar onComplete={() => {}} isLoading={isLoading} />
+              </motion.div>
 
-              {/* 响应式域名标注 - 移动端更大 */}
-              <div
+              {/* 响应式域名标注 */}
+              <motion.div
                 className={`warm-text font-medium ${
-                  isMobile ? "text-2xl sm:text-3xl lg:text-4xl" : "text-xl sm:text-2xl lg:text-3xl"
+                  isMobile ? "text-2xl sm:text-3xl" : "text-xl sm:text-2xl lg:text-3xl"
                 }`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
+                transition={{
+                  delay: 0.6,
+                  duration: 0.6,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
               >
-                <TypewriterEffect text="Vegcat.icu" delay={400} speed={80} />
-              </div>
+                <TypewriterEffect text="Vegcat.icu" delay={600} speed={90} />
+              </motion.div>
 
               {/* 描述文字 */}
-              <motion.div className="text-lg sm:text-xl lg:text-2xl max-w-lg leading-relaxed mx-auto warm-text">
+              <motion.div
+                className={`max-w-lg leading-relaxed mx-auto warm-text ${
+                  isMobile ? "text-base sm:text-lg px-4" : "text-lg sm:text-xl lg:text-2xl"
+                }`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
+                transition={{
+                  delay: 0.8,
+                  duration: 0.6,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={displayedDescription}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    transition={{
+                      duration: 0.4,
+                      ease: [0.4, 0, 0.2, 1],
+                    }}
                   >
                     <TypewriterEffect
                       text={displayedDescription}
-                      delay={isLoading ? 800 : 0}
-                      speed={isHoveringAvatar ? 0 : 60}
+                      delay={isLoading ? 1000 : 0}
+                      speed={isHoveringAvatar ? 0 : 70}
                       forceFullText={isHoveringAvatar}
                     />
                   </motion.div>
                 </AnimatePresence>
               </motion.div>
 
-              {/* 矩形按钮 - 移动端优化 */}
+              {/* 优化的矩形按钮 */}
               <motion.div
-                transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
-                className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 pt-6"
+                className={`flex flex-col sm:flex-row flex-wrap justify-center gap-3 ${isMobile ? "pt-4" : "pt-6"}`}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 30 : 0 }}
+                transition={{
+                  delay: 1.0,
+                  duration: 0.8,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
               >
                 {[
                   {
@@ -591,21 +570,21 @@ export default function Component() {
                 ].map((item, index) => (
                   <motion.div
                     key={item.label}
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    initial={{ opacity: 0, scale: 0.8, y: 30 }}
                     animate={{ opacity: isLoading ? 0 : 1, scale: 1, y: 0 }}
                     transition={{
-                      delay: 1.4 + index * 0.1,
-                      duration: 0.4,
-                      ease: "easeOut",
+                      delay: 1.2 + index * 0.15,
+                      duration: 0.6,
+                      ease: [0.4, 0, 0.2, 1],
                     }}
                     whileHover={{
                       scale: 1.05,
-                      y: -3,
-                      transition: { duration: 0.2 },
+                      y: -4,
+                      transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
                     }}
                     whileTap={{
                       scale: 0.95,
-                      transition: { duration: 0.1 },
+                      transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] },
                     }}
                     className={isMobile ? "mobile-button" : "w-full sm:w-auto"}
                   >
@@ -614,13 +593,13 @@ export default function Component() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`warm-button block text-center no-underline text-white font-medium ${
-                        isMobile ? "px-5 py-3 text-sm" : "w-full sm:w-auto px-6 py-3"
+                        isMobile ? "px-4 py-2.5 text-sm" : "w-full sm:w-auto px-6 py-3"
                       }`}
                     >
                       <span className="flex items-center justify-center">
-                        <item.icon className="w-5 h-5 mr-2" />
+                        <item.icon className="w-4 h-4 mr-2" />
                         {item.label}
-                        <ArrowRight className="w-4 h-4 ml-2" />
+                        <ArrowRight className="w-3 h-3 ml-2" />
                       </span>
                     </a>
                   </motion.div>
@@ -630,14 +609,18 @@ export default function Component() {
           </div>
         </motion.div>
 
-        {/* 底部信息 */}
+        {/* 底部信息 - 移动端优化 */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 10 : 0 }}
-          transition={{ delay: 2.0, duration: 0.6, ease: "easeOut" }}
-          className="relative z-10 pb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
+          transition={{
+            delay: 2.2,
+            duration: 0.6,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+          className={`relative z-10 ${isMobile ? "pb-2" : "pb-4"}`}
         >
-          <div className="flex justify-between items-center px-4 sm:px-8">
+          <div className={`flex justify-between items-center ${isMobile ? "px-4 text-xs" : "px-4 sm:px-8"}`}>
             <div className="flex-shrink-0">
               <a
                 href="https://cat.vegcat.icu"
@@ -649,7 +632,7 @@ export default function Component() {
               </a>
             </div>
             <div className="text-amber-200 text-sm warm-text text-right">
-              <TypewriterEffect text="© 2025 Powered by Vegcat" delay={200} speed={80} />
+              <TypewriterEffect text="© 2025 Powered by Vegcat" delay={300} speed={90} />
             </div>
           </div>
         </motion.div>
