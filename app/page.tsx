@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Gamepad2, Globe, ArrowRight } from "lucide-react"
+import { Gamepad2, Globe, ArrowRight, Heart, Star, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 
@@ -15,7 +14,7 @@ function BilibiliIcon({ className }: { className?: string }) {
   )
 }
 
-// 优化的打字机效果组件
+// 优化的打字机效果组件 - 减少重渲染
 function TypewriterEffect({
   text,
   delay = 0,
@@ -23,54 +22,43 @@ function TypewriterEffect({
   className = "",
   showCursor = false,
   onComplete,
-  forceFullText = false, // New prop to force full text display
+  forceFullText = false,
 }) {
   const [displayedText, setDisplayedText] = useState("")
   const timeoutRef = useRef(null)
-  const currentTextPropRef = useRef(text) // To detect changes in the text prop
+  const isCompleteRef = useRef(false)
 
   useEffect(() => {
-    // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
 
-    // If forceFullText is true, display immediately and exit
-    if (forceFullText) {
+    if (forceFullText || isCompleteRef.current) {
       setDisplayedText(text)
-      currentTextPropRef.current = text // Ensure ref is updated
       onComplete?.()
       return
     }
 
-    // If the text prop has changed, reset the displayed text
-    if (currentTextPropRef.current !== text) {
-      setDisplayedText("")
-      currentTextPropRef.current = text
-    }
-
-    let charIndex = displayedText.length // Start from current length or 0 if reset
-
+    let charIndex = 0
     const typeNextChar = () => {
       if (charIndex < text.length) {
         setDisplayedText(text.slice(0, charIndex + 1))
-        charIndex++ // Increment for the next call
+        charIndex++
         timeoutRef.current = setTimeout(typeNextChar, speed)
       } else {
+        isCompleteRef.current = true
         onComplete?.()
       }
     }
 
-    // Initial delay before starting to type
-    timeoutRef.current = setTimeout(typeNextChar, charIndex === 0 ? delay : speed)
+    timeoutRef.current = setTimeout(typeNextChar, delay)
 
-    // Cleanup function
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [text, delay, speed, onComplete, forceFullText]) // Dependencies are stable props.
+  }, [text, delay, speed, onComplete, forceFullText])
 
   return (
     <span className={className}>
@@ -80,7 +68,7 @@ function TypewriterEffect({
           animate={{ opacity: [1, 0, 1] }}
           transition={{
             duration: 0.8,
-            repeat: displayedText.length < text.length ? Number.POSITIVE_INFINITY : 0, // Cursor blinks only while typing
+            repeat: displayedText.length < text.length ? Number.POSITIVE_INFINITY : 0,
             ease: "easeInOut",
           }}
           className="inline-block ml-1 w-0.5 h-[1em] bg-current"
@@ -90,19 +78,18 @@ function TypewriterEffect({
   )
 }
 
-// 快速响应的旋转头像组件
-function QuickRotatingAvatar({ onComplete, isLoading }) {
+// 二次元风格头像组件 - 优化性能
+function AnimeStyleAvatar({ onComplete, isLoading }) {
   const [currentRotation, setCurrentRotation] = useState(0)
   const [animationKey, setAnimationKey] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
 
   const handleInteraction = () => {
-    if (isLoading) return // 如果正在加载，则不响应旋转
+    if (isLoading) return
 
-    // 随机选择旋转方向和角度
     const direction = Math.random() > 0.5 ? 1 : -1
     const rotationAmount = 360 * direction
 
-    // 立即更新旋转值
     setCurrentRotation((prev) => prev + rotationAmount)
     setAnimationKey((prev) => prev + 1)
   }
@@ -110,15 +97,18 @@ function QuickRotatingAvatar({ onComplete, isLoading }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete?.()
-    }, 1000)
+    }, 800) // 减少加载时间
     return () => clearTimeout(timer)
   }, [onComplete])
 
   return (
     <motion.div
-      // 移除 initial 和 animate，由父级 motion.div 统一控制入场动画
       className="relative cursor-pointer select-none"
-      onMouseEnter={handleInteraction}
+      onMouseEnter={() => {
+        setIsHovered(true)
+        handleInteraction()
+      }}
+      onMouseLeave={() => setIsHovered(false)}
       onTouchStart={handleInteraction}
       onClick={handleInteraction}
       whileHover={{ scale: 1.05 }}
@@ -130,173 +120,204 @@ function QuickRotatingAvatar({ onComplete, isLoading }) {
           rotate: currentRotation,
         }}
         transition={{
-          duration: 1.5,
+          duration: 1.2,
           ease: "easeOut",
         }}
         className="relative"
       >
-        <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl backdrop-blur-sm">
-          <Image
-            src="http://q.qlogo.cn/headimg_dl?dst_uin=1145145797&spec=640&img_type=jpg"
-            alt="Avatar"
-            width={640}
-            height={640}
-            className="w-full h-full object-cover"
-            priority
-          />
+        {/* 二次元风格边框 */}
+        <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 rounded-full overflow-hidden relative">
+          {/* 渐变边框 */}
+          <div
+            className="absolute inset-0 rounded-full p-1"
+            style={{
+              background: "linear-gradient(45deg, #ff6b9d, #c44569, #f8b500, #ff6b9d)",
+              backgroundSize: "300% 300%",
+              animation: "gradientShift 3s ease infinite",
+            }}
+          >
+            <div className="w-full h-full rounded-full overflow-hidden bg-black">
+              <Image
+                src="http://q.qlogo.cn/headimg_dl?dst_uin=1145145797&spec=640&img_type=jpg"
+                alt="Avatar"
+                width={640}
+                height={640}
+                className="w-full h-full object-cover"
+                priority
+                loading="eager"
+              />
+            </div>
+          </div>
+
+          {/* 二次元光效 */}
+          {isHovered && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: "radial-gradient(circle, rgba(255,107,157,0.3) 0%, transparent 70%)",
+                boxShadow: "0 0 30px rgba(255,107,157,0.5)",
+              }}
+            />
+          )}
         </div>
-        {/* 光环效果 */}
+
+        {/* 二次元装饰元素 */}
         <motion.div
           animate={{
             rotate: 360,
-            opacity: [0.3, 0.6, 0.3],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            rotate: { duration: 15, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
+            scale: { duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
+          }}
+          className="absolute -top-2 -right-2 text-pink-400"
+        >
+          <Sparkles className="w-6 h-6" />
+        </motion.div>
+
+        <motion.div
+          animate={{
+            rotate: -360,
+            scale: [1, 1.2, 1],
           }}
           transition={{
             rotate: { duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
-            opacity: { duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
+            scale: { duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute inset-0 rounded-full border-2 border-white/10"
-        />
+          className="absolute -bottom-2 -left-2 text-yellow-400"
+        >
+          <Star className="w-5 h-5" />
+        </motion.div>
       </motion.div>
     </motion.div>
   )
 }
 
-// 灰黑色鼠标跟随动态背景组件
-function GrayBlackMouseFollowBackground() {
+// 二次元风格背景组件 - 优化兼容性和性能
+function AnimeStyleBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isSupported, setIsSupported] = useState(true)
 
   useEffect(() => {
+    // 检测浏览器支持
+    const testEl = document.createElement("div")
+    testEl.style.background = "linear-gradient(45deg, red, blue)"
+    const isGradientSupported = testEl.style.background !== ""
+    setIsSupported(isGradientSupported)
+
     const handleMouseMove = (e) => {
-      setMousePosition({
-        x: e.clientX,
-        y: e.clientY,
+      // 节流处理，减少性能消耗
+      requestAnimationFrame(() => {
+        setMousePosition({
+          x: e.clientX,
+          y: e.clientY,
+        })
       })
     }
 
-    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener("mousemove", handleMouseMove, { passive: true })
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
+  // 回退背景样式
+  const fallbackStyle = {
+    backgroundColor: "#1a1a2e",
+    backgroundImage:
+      "radial-gradient(circle at 25% 25%, #16213e 0%, transparent 50%), radial-gradient(circle at 75% 75%, #0f3460 0%, transparent 50%)",
+  }
+
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {/* 主渐变背景 - 灰黑色调，添加兼容性支持 */}
+      {/* 主背景 - 二次元风格渐变 */}
       <motion.div
-        animate={{
-          backgroundImage: [
-            "linear-gradient(135deg, #000000 0%, #374151 50%, #111827 100%)",
-            "linear-gradient(225deg, #111827 0%, #4b5563 50%, #000000 100%)",
-            "linear-gradient(315deg, #000000 0%, #6b7280 50%, #1f2937 100%)",
-            "linear-gradient(45deg, #1f2937 0%, #374151 50%, #000000 100%)",
-            "linear-gradient(135deg, #000000 0%, #374151 50%, #111827 100%)",
-          ],
-        }}
+        className="absolute inset-0"
+        style={
+          isSupported
+            ? {
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%)",
+                backgroundSize: "400% 400%",
+              }
+            : fallbackStyle
+        }
+        animate={
+          isSupported
+            ? {
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }
+            : {}
+        }
         transition={{
-          duration: 80,
+          duration: 20,
           repeat: Number.POSITIVE_INFINITY,
           ease: "easeInOut",
         }}
+      />
+
+      {/* 覆盖层 - 降低亮度 */}
+      <div
         className="absolute inset-0"
         style={{
-          // 添加回退背景色
-          backgroundColor: "#111827",
-          // 添加 webkit 前缀支持
-          WebkitBackgroundImage: "linear-gradient(135deg, #000000 0%, #374151 50%, #111827 100%)",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
         }}
       />
 
-      {/* 主光斑 - 灰色调，优化兼容性 */}
+      {/* 二次元光斑效果 */}
       <motion.div
-        animate={{
-          x: mousePosition.x - 200,
-          y: mousePosition.y - 200,
-          scale: [1, 1.1, 0.95, 1.05, 1],
-          opacity: [0.08, 0.15, 0.12, 0.18, 0.08],
+        className="absolute w-96 h-96 rounded-full opacity-20"
+        style={{
+          left: mousePosition.x - 200,
+          top: mousePosition.y - 200,
+          background: "radial-gradient(circle, #ff6b9d 0%, transparent 70%)",
+          filter: "blur(40px)",
+          WebkitFilter: "blur(40px)",
         }}
         transition={{
-          x: { type: "spring", stiffness: 10, damping: 70 },
-          y: { type: "spring", stiffness: 10, damping: 70 },
-          scale: { duration: 100, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-          opacity: { duration: 90, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-        }}
-        className="absolute w-96 h-96 rounded-full"
-        style={{
-          left: 0,
-          top: 0,
-          backgroundColor: "rgba(156, 163, 175, 0.1)",
-          filter: "blur(32px)",
-          WebkitFilter: "blur(32px)", // 添加 webkit 前缀
+          x: { type: "spring", stiffness: 50, damping: 30 },
+          y: { type: "spring", stiffness: 50, damping: 30 },
         }}
       />
 
-      {/* 次要光斑 - 深灰色调，优化兼容性 */}
       <motion.div
-        animate={{
-          x: mousePosition.x * 0.2 - 160,
-          y: mousePosition.y * 0.2 - 160,
-          scale: [1.05, 0.85, 1.2, 0.9, 1.05],
-          opacity: [0.06, 0.12, 0.09, 0.15, 0.06],
+        className="absolute w-80 h-80 rounded-full opacity-15"
+        style={{
+          left: mousePosition.x * 0.3 - 160,
+          top: mousePosition.y * 0.3 - 160,
+          background: "radial-gradient(circle, #4facfe 0%, transparent 70%)",
+          filter: "blur(35px)",
+          WebkitFilter: "blur(35px)",
         }}
         transition={{
-          x: { type: "spring", stiffness: 8, damping: 80 },
-          y: { type: "spring", stiffness: 8, damping: 80 },
-          scale: { duration: 120, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-          opacity: { duration: 110, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-        }}
-        className="absolute w-80 h-80 rounded-full"
-        style={{
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(107, 114, 128, 0.08)",
-          filter: "blur(32px)",
-          WebkitFilter: "blur(32px)", // 添加 webkit 前缀
+          x: { type: "spring", stiffness: 30, damping: 40 },
+          y: { type: "spring", stiffness: 30, damping: 40 },
         }}
       />
 
-      {/* 第三个光斑 - 浅灰色调，优化兼容性 */}
-      <motion.div
-        animate={{
-          x: -mousePosition.x * 0.1 + (typeof window !== "undefined" ? window.innerWidth / 2 : 400) - 140,
-          y: -mousePosition.y * 0.1 + (typeof window !== "undefined" ? window.innerHeight / 2 : 400) - 140,
-          scale: [0.9, 1.15, 0.8, 1.1, 0.9],
-          opacity: [0.04, 0.1, 0.07, 0.12, 0.04],
-        }}
-        transition={{
-          x: { type: "spring", stiffness: 5, damping: 90 },
-          y: { type: "spring", stiffness: 5, damping: 90 },
-          scale: { duration: 140, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-          opacity: { duration: 130, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-        }}
-        className="absolute w-72 h-72 rounded-full"
-        style={{
-          left: 0,
-          top: 0,
-          backgroundColor: "rgba(209, 213, 219, 0.06)",
-          filter: "blur(32px)",
-          WebkitFilter: "blur(32px)", // 添加 webkit 前缀
-        }}
-      />
-
-      {/* 极慢的粒子 - 白色调，优化兼容性 */}
-      {[...Array(3)].map((_, i) => (
+      {/* 二次元装饰粒子 */}
+      {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full"
+          className="absolute"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            left: `${20 + i * 15}%`,
+            top: `${10 + i * 12}%`,
+            width: "4px",
+            height: "4px",
+            borderRadius: "50%",
+            backgroundColor: ["#ff6b9d", "#4facfe", "#f093fb", "#764ba2", "#667eea", "#f5576c"][i],
           }}
           animate={{
-            opacity: [0, 0.3, 0],
-            scale: [0, 0.8, 0],
-            x: [0, Math.random() * 40 - 20, 0],
-            y: [0, Math.random() * 40 - 20, 0],
+            y: [0, -20, 0],
+            opacity: [0.3, 0.8, 0.3],
+            scale: [0.5, 1, 0.5],
           }}
           transition={{
-            duration: Math.random() * 20 + 40,
+            duration: 3 + i * 0.5,
             repeat: Number.POSITIVE_INFINITY,
-            delay: Math.random() * 15,
+            delay: i * 0.5,
             ease: "easeInOut",
           }}
         />
@@ -305,10 +326,10 @@ function GrayBlackMouseFollowBackground() {
   )
 }
 
-// 快速加载动画组件
-function LoadingAnimation({ onComplete }) {
+// 快速加载动画 - 二次元风格
+function AnimeLoadingAnimation({ onComplete }) {
   useEffect(() => {
-    const timer = setTimeout(onComplete, 600)
+    const timer = setTimeout(onComplete, 400) // 减少加载时间
     return () => clearTimeout(timer)
   }, [onComplete])
 
@@ -316,22 +337,34 @@ function LoadingAnimation({ onComplete }) {
     <motion.div
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="fixed inset-0 bg-black z-50 flex items-center justify-center"
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      }}
     >
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-6">
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 0.8, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-          className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full mx-auto"
-        />
+          animate={{
+            rotate: 360,
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            rotate: { duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
+            scale: { duration: 0.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
+          }}
+          className="w-12 h-12 mx-auto relative"
+        >
+          <Heart className="w-12 h-12 text-pink-300" fill="currentColor" />
+        </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.3 }}
-          className="text-white/60 text-sm"
+          className="text-white text-lg font-bold"
+          style={{ fontFamily: "'Comic Sans MS', cursive" }}
         >
-          Loading...
+          Loading...♡
         </motion.div>
       </div>
     </motion.div>
@@ -339,14 +372,13 @@ function LoadingAnimation({ onComplete }) {
 }
 
 export default function Component() {
-  const [showContent, setShowContent] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isHoveringAvatar, setIsHoveringAvatar] = useState(false)
   const [displayedDescription, setDisplayedDescription] = useState("那一天的忧郁 忧郁起来")
   const hoverTimeoutRef = useRef(null)
 
   const handleAvatarHover = (isHovering) => {
-    if (isLoading) return // 如果正在加载，则不响应旋转
+    if (isLoading) return
 
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current)
@@ -355,166 +387,185 @@ export default function Component() {
 
     if (isHovering) {
       setIsHoveringAvatar(true)
-      setDisplayedDescription("那一天的寂寞 寂寞起来")
+      setDisplayedDescription("有bug吗？有bug就对了～(￣▽￣)~*")
       hoverTimeoutRef.current = setTimeout(() => {
         setIsHoveringAvatar(false)
         setDisplayedDescription("那一天的忧郁 忧郁起来")
       }, 2000)
     } else {
-      // If mouse leaves before 2 seconds, revert immediately
       setIsHoveringAvatar(false)
       setDisplayedDescription("那一天的忧郁 忧郁起来")
     }
   }
 
   return (
-    <div className="min-h-screen text-white relative overflow-hidden flex flex-col">
-      {/* 加载动画 */}
-      <AnimatePresence>{isLoading && <LoadingAnimation onComplete={() => setIsLoading(false)} />}</AnimatePresence>
+    <>
+      {/* 内联CSS动画 - 避免外部依赖 */}
+      <style jsx>{`
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .anime-text {
+          font-family: 'Comic Sans MS', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+          text-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+        }
+        .anime-button {
+          background: linear-gradient(45deg, #ff6b9d, #4facfe);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+          transition: all 0.3s ease;
+        }
+        .anime-button:hover {
+          box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+          transform: translateY(-2px);
+        }
+      `}</style>
 
-      {/* 灰黑色鼠标跟随动态背景 */}
-      <GrayBlackMouseFollowBackground />
+      <div className="min-h-screen text-white relative overflow-hidden flex flex-col">
+        {/* 加载动画 */}
+        <AnimatePresence>
+          {isLoading && <AnimeLoadingAnimation onComplete={() => setIsLoading(false)} />}
+        </AnimatePresence>
 
-      {/* 主内容区域 */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }} // 统一的入场动画
-        animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 50 : 0 }}
-        transition={{ delay: 0.1, duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-8 py-4 sm:py-8"
-      >
-        <div className="max-w-4xl w-full">
-          {/* 居中内容 */}
-          <div className="text-center space-y-3 sm:space-y-4 lg:space-y-6">
-            {/* 头像替代标题 */}
-            <div
-              className="flex justify-center"
-              onMouseEnter={() => handleAvatarHover(true)}
-              onMouseLeave={() => handleAvatarHover(false)}
-            >
-              <QuickRotatingAvatar onComplete={() => setShowContent(true)} isLoading={isLoading} />
-            </div>
+        {/* 二次元风格背景 */}
+        <AnimeStyleBackground />
 
-            {/* 域名标注 */}
-            <div className="text-lg sm:text-xl lg:text-2xl text-gray-300">
-              <TypewriterEffect text="Vegcat.icu" delay={600} speed={50} className="font-mono" />
-            </div>
+        {/* 主内容区域 */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 30 : 0 }}
+          transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}
+          className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-8 py-4 sm:py-8"
+        >
+          <div className="max-w-4xl w-full">
+            <div className="text-center space-y-4 sm:space-y-6">
+              {/* 二次元风格头像 */}
+              <div
+                className="flex justify-center"
+                onMouseEnter={() => handleAvatarHover(true)}
+                onMouseLeave={() => handleAvatarHover(false)}
+              >
+                <AnimeStyleAvatar onComplete={() => {}} isLoading={isLoading} />
+              </div>
 
-            {/* 描述文字 */}
-            <motion.div className="text-lg sm:text-xl lg:text-2xl text-gray-200 max-w-lg leading-relaxed mx-auto">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={displayedDescription} // Key changes when text changes, triggering re-animation
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }} // Fade transition for text change
-                >
-                  <TypewriterEffect
-                    text={displayedDescription}
-                    delay={isLoading ? 1200 : 0} // Delay only on initial load
-                    speed={isHoveringAvatar ? 0 : 40} // No typing speed when hovering
-                    forceFullText={isHoveringAvatar} // Force full text when hovering
-                  />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
+              {/* 域名标注 - 二次元风格 */}
+              <div className="text-xl sm:text-2xl lg:text-3xl anime-text">
+                <TypewriterEffect text="✧･ﾟ: *✧･ﾟ:* Vegcat.icu *:･ﾟ✧*:･ﾟ✧" delay={400} speed={80} />
+              </div>
 
-            {/* 联系按钮 */}
-            <motion.div
-              transition={{ delay: 1.9, duration: 0.6, ease: "easeOut" }}
-              className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 pt-4 sm:pt-6 lg:pt-8"
-            >
-              {[
-                { icon: BilibiliIcon, label: "Bilibili", href: "https://m.bilibili.com/space/497350955" },
-                { icon: Gamepad2, label: "Steam", href: "https://steamcommunity.com/id/TwoOctober" },
-                { icon: Globe, label: "联系我", href: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh75o0o28biX4Bx8LpQABB9kt0kAgYhkAAlYZAAKap5hWhIUMoKRTIr42BA.jpg" },
-              ].map((item, index) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
-                  transition={{
-                    delay: index * 0.1,
-                    duration: 0.3,
-                    ease: "easeOut",
-                  }}
-                  whileHover={{
-                    scale: 1.05,
-                    transition: { duration: 0.3 },
-                  }}
-                  whileTap={{
-                    scale: 0.95,
-                    transition: { duration: 0.1 },
-                  }}
-                  className="w-full sm:w-auto"
-                >
-                  <Button
-                    variant="outline"
-                    size="default"
-                    className="w-full sm:w-auto bg-white/10 border-white/30 text-white hover:bg-white hover:text-black transition-all duration-300 group backdrop-blur-sm shadow-lg hover:shadow-white/20 text-sm sm:text-base"
-                    asChild
+              {/* 描述文字 - 二次元风格 */}
+              <motion.div className="text-lg sm:text-xl lg:text-2xl max-w-lg leading-relaxed mx-auto anime-text">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={displayedDescription}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                   >
-                    <motion.a
+                    <TypewriterEffect
+                      text={displayedDescription}
+                      delay={isLoading ? 800 : 0}
+                      speed={isHoveringAvatar ? 0 : 60}
+                      forceFullText={isHoveringAvatar}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </motion.div>
+
+              {/* 二次元风格按钮 */}
+              <motion.div
+                transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
+                className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 pt-6"
+              >
+                {[
+                  {
+                    icon: BilibiliIcon,
+                    label: "哔哩哔哩 ♡",
+                    href: "https://m.bilibili.com/space/497350955",
+                    color: "#ff6b9d",
+                  },
+                  {
+                    icon: Gamepad2,
+                    label: "Steam ★",
+                    href: "https://steamcommunity.com/id/TwoOctober",
+                    color: "#4facfe",
+                  },
+                  {
+                    icon: Globe,
+                    label: "联系我 ♪",
+                    href: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh75o0o28biX4Bx8LpQABB9kt0kAgYhkAAlYZAAKap5hWhIUMoKRTIr42BA.jpg",
+                    color: "#f093fb",
+                  },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    animate={{ opacity: isLoading ? 0 : 1, scale: 1, y: 0 }}
+                    transition={{
+                      delay: 1.4 + index * 0.1,
+                      duration: 0.4,
+                      ease: "easeOut",
+                    }}
+                    whileHover={{
+                      scale: 1.05,
+                      y: -3,
+                      transition: { duration: 0.2 },
+                    }}
+                    whileTap={{
+                      scale: 0.95,
+                      transition: { duration: 0.1 },
+                    }}
+                    className="w-full sm:w-auto"
+                  >
+                    <a
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex items-center justify-center"
+                      className="anime-button block w-full sm:w-auto px-6 py-3 rounded-full text-white font-bold text-center no-underline"
+                      style={{
+                        background: `linear-gradient(45deg, ${item.color}, #764ba2)`,
+                      }}
                     >
-                      <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
-                        <item.icon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                      </motion.div>
-                      {item.label}
-                      <motion.div whileHover={{ x: 4 }} transition={{ duration: 0.2 }}>
-                        <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 ml-2" />
-                      </motion.div>
-                    </motion.a>
-                  </Button>
-                </motion.div>
-              ))}
-            </motion.div>
+                      <span className="flex items-center justify-center">
+                        <item.icon className="w-5 h-5 mr-2" />
+                        {item.label}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </span>
+                    </a>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* 底部信息区域 - 优化水平排列 */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 10 : 0 }}
-        transition={{ delay: 3.0, duration: 0.6, ease: "easeOut" }}
-        className="relative z-10 pb-2 sm:pb-4"
-      >
-        {/* 始终水平排列的响应式布局 */}
-        <div className="flex justify-between items-center px-2 xs:px-3 sm:px-4 md:px-8">
-          {/* 左侧版权信息 */}
-
-          {/* 中间旧版网页按钮 */}
-          <div className="flex-shrink-0 mx-1 xs:mx-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-[10px] xs:text-xs sm:text-sm px-1 xs:px-2 py-1 h-auto min-h-0"
-              asChild
-            >
-              <a href="https://cat.vegcat.icu" target="_blank" rel="noopener noreferrer">
-                <span className="sm:hidden">旧版网页</span>
-                <span className="hidden sm:inline">旧版网页</span>
+        {/* 底部信息 - 二次元风格 */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 10 : 0 }}
+          transition={{ delay: 2.0, duration: 0.6, ease: "easeOut" }}
+          className="relative z-10 pb-4"
+        >
+          <div className="flex justify-between items-center px-4 sm:px-8">
+            <div className="flex-shrink-0">
+              <a
+                href="https://cat.vegcat.icu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-pink-300 hover:text-pink-200 transition-colors duration-300 text-sm anime-text no-underline"
+              >
+                ← 旧版网页
               </a>
-            </Button>
+            </div>
+            <div className="text-pink-300 text-sm anime-text text-right">
+              <TypewriterEffect text="© 2025 Made with ♡ by Vegcat" delay={200} speed={80} />
+            </div>
           </div>
-
-          {/* 右侧 Powered by */}
-          <div className="text-gray-400 text-[10px] xs:text-xs sm:text-sm flex-shrink-0 text-right">
-            <span className="sm:hidden">
-              <TypewriterEffect text="© 2025 Powered by Vegcat" delay={300} speed={50} />
-            </span>
-            <span className="hidden sm:inline">
-              <TypewriterEffect text="© 2025 Powered by Vegcat" delay={300} speed={50} />
-            </span>
-          </div>
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+    </>
   )
 }
