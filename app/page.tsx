@@ -93,7 +93,7 @@ function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
-  const handleInteraction = () => {
+  const handleClick = () => {
     if (isLoading) return
 
     const direction = Math.random() > 0.5 ? 1 : -1
@@ -118,9 +118,8 @@ function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
   return (
     <motion.div
       className="relative cursor-pointer select-none"
-      onMouseEnter={handleInteraction}
-      onTouchStart={handleInteraction}
-      onClick={handleInteraction}
+      onTouchStart={handleClick}
+      onClick={handleClick}
       whileHover={{
         scale: 1.03,
         transition: { duration: 0.4, ease: "easeOut" },
@@ -136,7 +135,7 @@ function EnhancedResponsiveAvatar({ onComplete, isLoading }) {
           rotate: currentRotation,
         }}
         transition={{
-          duration: 1.5,
+          duration: 2.0, // 从1.5s增加到2.0s，转动更慢
           ease: [0.4, 0, 0.2, 1],
         }}
         className="relative"
@@ -312,7 +311,7 @@ function ElegantLoadingAnimation({ onComplete }) {
       }}
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{
-        backgroundColor: "#b8956a",
+        background: "linear-gradient(135deg, #d4a574 0%, #e8c5a0 100%)",
       }}
     >
       <div className="text-center space-y-8">
@@ -393,75 +392,30 @@ export default function Component() {
           text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
         
-        /* 丰富的按钮颜色 */
-        .warm-button-bilibili {
-          background: linear-gradient(135deg, #ff6b9d 0%, #ff8e8e 50%, #ffa8a8 100%);
+        /* 温暖的金棕色按钮 */
+        .warm-button {
+          background: linear-gradient(135deg, #d4a574 0%, #e8c5a0 50%, #f4d4a7 100%);
           border: 2px solid rgba(255, 255, 255, 0.2);
           border-radius: 8px;
-          box-shadow: 0 4px 20px rgba(255, 107, 157, 0.3);
+          box-shadow: 0 4px 20px rgba(212, 165, 116, 0.3);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         }
-        .warm-button-bilibili:hover {
-          box-shadow: 0 8px 25px rgba(255, 107, 157, 0.5);
+        .warm-button:hover {
+          box-shadow: 0 8px 25px rgba(212, 165, 116, 0.5);
           transform: translateY(-3px);
-          background: linear-gradient(135deg, #ff8eb3 0%, #ffa4a4 50%, #ffbebe 100%);
+          background: linear-gradient(135deg, #e8c5a0 0%, #f4d4a7 50%, #fff2d9 100%);
+          border-color: rgba(255, 255, 255, 0.3);
         }
         
-        .warm-button-steam {
-          background: linear-gradient(135deg, #4a90e2 0%, #5ba3f5 50%, #6bb6ff 100%);
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
-          box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-        }
-        .warm-button-steam:hover {
-          box-shadow: 0 8px 25px rgba(74, 144, 226, 0.5);
-          transform: translateY(-3px);
-          background: linear-gradient(135deg, #60a0f2 0%, #71b3ff 50%, #81c6ff 100%);
-        }
-        
-        .warm-button-contact {
-          background: linear-gradient(135deg, #50c878 0%, #66d68a 50%, #7ce49c 100%);
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
-          box-shadow: 0 4px 20px rgba(80, 200, 120, 0.3);
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-        }
-        .warm-button-contact:hover {
-          box-shadow: 0 8px 25px rgba(80, 200, 120, 0.5);
-          transform: translateY(-3px);
-          background: linear-gradient(135deg, #66d68a 0%, #7ce49c 50%, #92f2ae 100%);
-        }
-        
-        /* 移动端按钮优化 - 更短 */
-        @media (max-width: 768px) {
-          .mobile-button {
-            width: auto !important;
-            min-width: 85px !important; /* 进一步缩短 */
-            max-width: 120px !important; /* 进一步缩短 */
-            padding: 10px 14px !important;
-            font-size: 13px !important;
-          }
-        }
-        
-        /* 桌面端按钮优化 - 更宽更矮 */
-        @media (min-width: 769px) {
-          .desktop-button {
-            min-width: 140px !important; /* 加宽 */
-            padding: 10px 24px !important; /* 垂直缩短，水平加宽 */
-          }
-        }
-        
-        /* 移动端布局修复 */
+        /* 移动端布局优化 */
         @media (max-width: 768px) {
           .mobile-layout {
             min-height: 100vh;
             min-height: 100dvh;
             display: flex;
             flex-direction: column;
+            position: relative;
           }
           .mobile-main {
             flex: 1;
@@ -469,19 +423,18 @@ export default function Component() {
             flex-direction: column;
             justify-content: center;
             padding: 1rem;
+            padding-bottom: 4rem; /* 为底部留出空间 */
           }
           .mobile-footer {
-            flex-shrink: 0;
-            margin-top: auto;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 20;
           }
-        }
-        
-        /* 老旧浏览器回退 */
-        .legacy-browser .warm-button-bilibili,
-        .legacy-browser .warm-button-steam,
-        .legacy-browser .warm-button-contact {
-          background: #b8956a !important;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
         }
       `}</style>
 
@@ -594,19 +547,19 @@ export default function Component() {
                     icon: BilibiliIcon,
                     label: "Bilibili",
                     href: "https://m.bilibili.com/space/497350955",
-                    className: "warm-button-bilibili",
+                    className: "warm-button",
                   },
                   {
                     icon: Gamepad2,
                     label: "Steam",
                     href: "https://steamcommunity.com/id/TwoOctober",
-                    className: "warm-button-steam",
+                    className: "warm-button",
                   },
                   {
                     icon: Globe,
                     label: "联系我",
                     href: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh75o0o28biX4Bx8LpQABB9kt0kAgYhkAAlYZAAKap5hWhIUMoKRTIr42BA.jpg",
-                    className: "warm-button-contact",
+                    className: "warm-button",
                   },
                 ].map((item, index) => (
                   <motion.div
@@ -659,7 +612,7 @@ export default function Component() {
             duration: 0.6,
             ease: [0.4, 0, 0.2, 1],
           }}
-          className={`relative z-10 ${isMobile ? "mobile-footer pb-3" : "pb-4"}`}
+          className={`relative z-10 ${isMobile ? "mobile-footer" : "pb-4"}`}
         >
           <div className={`flex justify-between items-center ${isMobile ? "px-4 text-xs" : "px-4 sm:px-8"}`}>
             <div className="flex-shrink-0">
