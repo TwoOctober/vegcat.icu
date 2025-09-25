@@ -512,7 +512,7 @@ export default function Component() {
       }, 2000)
     } else {
       setIsHoveringAvatar(false)
-      setDisplayedDescription("漫无止境的八月循环了多少次？")
+      setDisplayedDescription("15532次")
     }
   }
 
