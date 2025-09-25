@@ -254,7 +254,7 @@ function EnhancedResponsiveBackground() {
 
   // 选择背景图片
   const desktopBg =
-    "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8ho0o-qNZfpecYx-loV1Ij3gF6BmgACYRkAApqnmFZH3mnkoy1eyzYE.jpg"
+    "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECvepo1T7H7O_PZGhOfrxnevxO406bEgACOS8AAttgqVZK9-qGE0oUpTYE.jpg"
   const mobileBg =
     "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8xo0pFTN0Yp1H_7zL3pzPQX1c0JTwACZRkAApqnmFYYPck9JMXOrTYE.jpg"
   const backgroundImage = isMobile ? mobileBg : desktopBg
