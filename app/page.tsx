@@ -165,6 +165,7 @@ function EnhancedResponsiveBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [delayedMousePosition, setDelayedMousePosition] = useState({ x: 0, y: 0 })
   const [isMobile, setIsMobile] = useState(false)
+  const [isClient, setIsClient] = useState(false)
   const [browserInfo, setBrowserInfo] = useState({
     is360: false,
     isIE: false,
@@ -175,6 +176,8 @@ function EnhancedResponsiveBackground() {
   })
 
   useEffect(() => {
+    setIsClient(true)
+
     // 检测移动设备
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768)
@@ -231,7 +234,6 @@ function EnhancedResponsiveBackground() {
 
     detectBrowser()
 
-    // 鼠标移动事件 - 添加延迟效果
     const handleMouseMove = (e) => {
       if (browserInfo.supportsFilter && !isMobile) {
         const newPosition = { x: e.clientX, y: e.clientY }
@@ -250,7 +252,20 @@ function EnhancedResponsiveBackground() {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("resize", checkMobile)
     }
-  }, [browserInfo.supportsFilter, isMobile])
+  }, [isMobile])
+
+  if (!isClient) {
+    return (
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: "#8b6f47",
+          }}
+        />
+      </div>
+    )
+  }
 
   // 选择背景图片
   const desktopBg =
@@ -262,14 +277,13 @@ function EnhancedResponsiveBackground() {
   // 360浏览器和IE的特殊处理
   const getBackgroundStyle = () => {
     if (browserInfo.is360 || browserInfo.isIE || browserInfo.isOldChrome) {
-      // 360浏览器使用更简单的背景方案
       return {
         backgroundColor: "#8b6f47",
         backgroundImage: browserInfo.supportsBackgroundImage ? `url('${backgroundImage}')` : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed", // 360浏览器兼容性
+        backgroundAttachment: "fixed",
       }
     }
 
@@ -295,7 +309,6 @@ function EnhancedResponsiveBackground() {
     if (browserInfo.is360 || browserInfo.isIE) {
       return {
         backgroundColor: "rgba(0, 0, 0, 0.5)",
-        // IE兼容性
         filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=50)",
       }
     }
@@ -318,16 +331,15 @@ function EnhancedResponsiveBackground() {
       {/* 温暖色调覆盖层 */}
       <div className="absolute inset-0" style={getOverlayStyle()} />
 
-      {/* 模糊遮罩层 - 与鼠标交互响应 */}
       {browserInfo.supportsFilter && !browserInfo.is360 && !browserInfo.isIE && !isMobile && (
         <motion.div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle 600px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.03) 0%, transparent 70%)",
-            filter: "blur(60px)",
-            WebkitFilter: "blur(60px)",
-            opacity: 0.7,
+              "radial-gradient(circle 800px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.02) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            WebkitFilter: "blur(80px)",
+            opacity: 0.5,
           }}
           animate={{
             x: delayedMousePosition.x - window.innerWidth / 2,
@@ -335,8 +347,8 @@ function EnhancedResponsiveBackground() {
           }}
           transition={{
             type: "spring",
-            stiffness: 25,
-            damping: 40,
+            stiffness: 20,
+            damping: 35,
             mass: 0.5,
           }}
         />
