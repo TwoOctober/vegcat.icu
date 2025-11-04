@@ -14,8 +14,6 @@ function BilibiliIcon({ className }: { className?: string }) {
   )
 }
 
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=715240&auto=1&height=66"></iframe>
-
 // 优化的打字机效果组件
 function TypewriterEffect({
   text,
@@ -319,6 +317,30 @@ function EnhancedResponsiveBackground() {
 
       {/* 温暖色调覆盖层 */}
       <div className="absolute inset-0" style={getOverlayStyle()} />
+
+      {/* 模糊遮罩层 - 与鼠标交互响应 */}
+      {browserInfo.supportsFilter && !browserInfo.is360 && !browserInfo.isIE && !isMobile && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle 600px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.03) 0%, transparent 70%)",
+            filter: "blur(60px)",
+            WebkitFilter: "blur(60px)",
+            opacity: 0.7,
+          }}
+          animate={{
+            x: delayedMousePosition.x - window.innerWidth / 2,
+            y: delayedMousePosition.y - window.innerHeight / 2,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 25,
+            damping: 40,
+            mass: 0.5,
+          }}
+        />
+      )}
 
       {/* 深色遮罩 */}
       <div
