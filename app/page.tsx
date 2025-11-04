@@ -5,10 +5,11 @@ import { Gamepad2, Globe, ArrowRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 
+// Bilibili 图标组件
 function BilibiliIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .356-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.789 1.894v7.52c.02.765.283 1.395.789 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.128.789-1.893v-7.52c-.02-.765-.283-1.396-.789-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z" />
+      <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .356-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.789 1.894v7.52c.02.765.283 1.395.789 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498 1.134-.755 1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z" />
     </svg>
   )
 }
@@ -164,7 +165,6 @@ function EnhancedResponsiveBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [delayedMousePosition, setDelayedMousePosition] = useState({ x: 0, y: 0 })
   const [isMobile, setIsMobile] = useState(false)
-  const [isClient, setIsClient] = useState(false)
   const [browserInfo, setBrowserInfo] = useState({
     is360: false,
     isIE: false,
@@ -175,8 +175,6 @@ function EnhancedResponsiveBackground() {
   })
 
   useEffect(() => {
-    setIsClient(true)
-
     // 检测移动设备
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768)
@@ -233,6 +231,7 @@ function EnhancedResponsiveBackground() {
 
     detectBrowser()
 
+    // 鼠标移动事件 - 添加延迟效果
     const handleMouseMove = (e) => {
       if (browserInfo.supportsFilter && !isMobile) {
         const newPosition = { x: e.clientX, y: e.clientY }
@@ -251,20 +250,7 @@ function EnhancedResponsiveBackground() {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("resize", checkMobile)
     }
-  }, [isMobile])
-
-  if (!isClient) {
-    return (
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundColor: "#8b6f47",
-          }}
-        />
-      </div>
-    )
-  }
+  }, [browserInfo.supportsFilter, isMobile])
 
   // 选择背景图片
   const desktopBg =
@@ -276,13 +262,14 @@ function EnhancedResponsiveBackground() {
   // 360浏览器和IE的特殊处理
   const getBackgroundStyle = () => {
     if (browserInfo.is360 || browserInfo.isIE || browserInfo.isOldChrome) {
+      // 360浏览器使用更简单的背景方案
       return {
         backgroundColor: "#8b6f47",
         backgroundImage: browserInfo.supportsBackgroundImage ? `url('${backgroundImage}')` : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed",
+        backgroundAttachment: "fixed", // 360浏览器兼容性
       }
     }
 
@@ -308,6 +295,7 @@ function EnhancedResponsiveBackground() {
     if (browserInfo.is360 || browserInfo.isIE) {
       return {
         backgroundColor: "rgba(0, 0, 0, 0.5)",
+        // IE兼容性
         filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=50)",
       }
     }
@@ -329,29 +317,6 @@ function EnhancedResponsiveBackground() {
 
       {/* 温暖色调覆盖层 */}
       <div className="absolute inset-0" style={getOverlayStyle()} />
-
-      {browserInfo.supportsFilter && !browserInfo.is360 && !browserInfo.isIE && !isMobile && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle 800px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.02) 0%, transparent 70%)",
-            filter: "blur(80px)",
-            WebkitFilter: "blur(80px)",
-            opacity: 0.5,
-          }}
-          animate={{
-            x: delayedMousePosition.x - window.innerWidth / 2,
-            y: delayedMousePosition.y - window.innerHeight / 2,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 20,
-            damping: 35,
-            mass: 0.5,
-          }}
-        />
-      )}
 
       {/* 深色遮罩 */}
       <div
@@ -515,6 +480,7 @@ function ContactModal({ isOpen, onClose }) {
 
 export default function Component() {
   const [isLoading, setIsLoading] = useState(true)
+  const [isHoveringAvatar, setIsHoveringAvatar] = useState(false)
   const [displayedDescription, setDisplayedDescription] = useState("漫无止境的八月循环了多少次")
   const [isMobile, setIsMobile] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
@@ -538,12 +504,15 @@ export default function Component() {
     }
 
     if (isHovering) {
+      setIsHoveringAvatar(true)
       setDisplayedDescription("15532次")
       hoverTimeoutRef.current = setTimeout(() => {
+        setIsHoveringAvatar(false)
         setDisplayedDescription("漫无止境的八月循环了多少次")
-      }, 2500)
+      }, 2000)
     } else {
-      setDisplayedDescription("漫无止境的八月循环了多少次")
+      setIsHoveringAvatar(false)
+      setDisplayedDescription("15532次")
     }
   }
 
@@ -567,13 +536,16 @@ export default function Component() {
           background: -o-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
           background: -ms-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
           border: 2px solid rgba(255, 255, 255, 0.15);
-          border-radius: 8px;
+          border-radius: 8px; /* 小圆角矩形 */
           box-shadow: 0 4px 15px rgba(166, 124, 82, 0.25);
           transition: all 0.3s ease;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+          /* 360浏览器兼容性 */
           -webkit-border-radius: 8px;
           -moz-border-radius: 8px;
+          /* IE兼容性 */
           filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a67c52', endColorstr='#d4a574', GradientType=1);
+          behavior: url(PIE.htc); /* IE6-8 圆角支持 */
         }
         .warm-button:hover {
           box-shadow: 0 6px 20px rgba(166, 124, 82, 0.35);
@@ -583,8 +555,10 @@ export default function Component() {
           background: -moz-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
           background: -o-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
           background: -ms-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
+          /* IE兼容性 */
           filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8956a', endColorstr='#e8c5a0', GradientType=1);
         }
+        /* 移动端按钮优化 */
         @media (max-width: 768px) {
           .mobile-button {
             width: auto !important;
@@ -593,11 +567,22 @@ export default function Component() {
             padding: 12px 20px !important;
           }
         }
+        /* 桌面端按钮优化 - 更宽 */
         @media (min-width: 769px) {
           .desktop-button {
-            min-width: 160px !important;
-            padding: 12px 28px !important;
+            min-width: 160px !important; /* 从140px增加到160px */
+            padding: 12px 28px !important; /* 水平padding增加 */
           }
+        }
+        /* 360浏览器特殊处理 */
+        .browser-360 .warm-button {
+          background-color: #b8956a !important;
+          background-image: none !important;
+        }
+        /* IE特殊处理 */
+        .ie-fallback {
+          background-color: #b8956a !important;
+          background-image: none !important;
         }
       `}</style>
 
@@ -619,15 +604,12 @@ export default function Component() {
         >
           <div className="max-w-4xl w-full">
             <div className="text-center space-y-4 sm:space-y-6">
-              <div
-                className="flex justify-center"
-                onMouseEnter={() => handleAvatarHover(true)}
-                onMouseLeave={() => handleAvatarHover(false)}
-              >
+              {/* 响应式头像 */}
+              <div className="flex justify-center">
                 <ResponsiveAvatar onComplete={() => {}} isLoading={isLoading} />
               </div>
 
-              {/* 响应式域名标注 */}
+              {/* 响应式域名标注 - 移动端更大 */}
               <div
                 className={`warm-text font-medium ${
                   isMobile ? "text-2xl sm:text-3xl lg:text-4xl" : "text-xl sm:text-2xl lg:text-3xl"
@@ -649,14 +631,14 @@ export default function Component() {
                     <TypewriterEffect
                       text={displayedDescription}
                       delay={isLoading ? 800 : 0}
-                      speed={60}
-                      forceFullText={false}
+                      speed={isHoveringAvatar ? 0 : 60}
+                      forceFullText={isHoveringAvatar}
                     />
                   </motion.div>
                 </AnimatePresence>
               </motion.div>
 
-              {/* 矩形按钮 */}
+              {/* 矩形按钮 - 移动端优化 */}
               <motion.div
                 transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
                 className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 pt-6"
@@ -675,8 +657,8 @@ export default function Component() {
                   {
                     icon: Globe,
                     label: "联系我",
-                    href: "#",
-                    onClick: () => setShowContactModal(true),
+                    href: "#", // 改为#
+                    onClick: () => setShowContactModal(true), // 添加点击事件
                   },
                 ].map((item, index) => (
                   <motion.div
@@ -752,6 +734,7 @@ export default function Component() {
           </div>
         </motion.div>
 
+        {/* 联系我弹窗 */}
         <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
       </div>
     </>
