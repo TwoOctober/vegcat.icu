@@ -6,8 +6,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Necoarc.cn",
-  description: "Necoarc.cn",
+  title: "Vegcat.icu",
+  description: "Vegcat的个人主页",
   icons: {
     icon: [
       {
