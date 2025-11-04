@@ -515,7 +515,6 @@ function ContactModal({ isOpen, onClose }) {
 
 export default function Component() {
   const [isLoading, setIsLoading] = useState(true)
-  const [isHoveringAvatar, setIsHoveringAvatar] = useState(false)
   const [displayedDescription, setDisplayedDescription] = useState("漫无止境的八月循环了多少次")
   const [isMobile, setIsMobile] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
@@ -539,15 +538,12 @@ export default function Component() {
     }
 
     if (isHovering) {
-      setIsHoveringAvatar(true)
       setDisplayedDescription("15532次")
       hoverTimeoutRef.current = setTimeout(() => {
-        setIsHoveringAvatar(false)
         setDisplayedDescription("漫无止境的八月循环了多少次")
-      }, 2000)
+      }, 2500)
     } else {
-      setIsHoveringAvatar(false)
-      setDisplayedDescription("15532次")
+      setDisplayedDescription("漫无止境的八月循环了多少次")
     }
   }
 
@@ -571,16 +567,13 @@ export default function Component() {
           background: -o-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
           background: -ms-linear-gradient(45deg, #a67c52, #b8956a, #d4a574);
           border: 2px solid rgba(255, 255, 255, 0.15);
-          border-radius: 8px; /* 小圆角矩形 */
+          border-radius: 8px;
           box-shadow: 0 4px 15px rgba(166, 124, 82, 0.25);
           transition: all 0.3s ease;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-          /* 360浏览器兼容性 */
           -webkit-border-radius: 8px;
           -moz-border-radius: 8px;
-          /* IE兼容性 */
           filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a67c52', endColorstr='#d4a574', GradientType=1);
-          behavior: url(PIE.htc); /* IE6-8 圆角支持 */
         }
         .warm-button:hover {
           box-shadow: 0 6px 20px rgba(166, 124, 82, 0.35);
@@ -590,10 +583,8 @@ export default function Component() {
           background: -moz-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
           background: -o-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
           background: -ms-linear-gradient(45deg, #b8956a, #d4a574, #e8c5a0);
-          /* IE兼容性 */
           filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8956a', endColorstr='#e8c5a0', GradientType=1);
         }
-        /* 移动端按钮优化 */
         @media (max-width: 768px) {
           .mobile-button {
             width: auto !important;
@@ -602,22 +593,11 @@ export default function Component() {
             padding: 12px 20px !important;
           }
         }
-        /* 桌面端按钮优化 - 更宽 */
         @media (min-width: 769px) {
           .desktop-button {
-            min-width: 160px !important; /* 从140px增加到160px */
-            padding: 12px 28px !important; /* 水平padding增加 */
+            min-width: 160px !important;
+            padding: 12px 28px !important;
           }
-        }
-        /* 360浏览器特殊处理 */
-        .browser-360 .warm-button {
-          background-color: #b8956a !important;
-          background-image: none !important;
-        }
-        /* IE特殊处理 */
-        .ie-fallback {
-          background-color: #b8956a !important;
-          background-image: none !important;
         }
       `}</style>
 
@@ -639,12 +619,15 @@ export default function Component() {
         >
           <div className="max-w-4xl w-full">
             <div className="text-center space-y-4 sm:space-y-6">
-              {/* 响应式头像 */}
-              <div className="flex justify-center">
+              <div
+                className="flex justify-center"
+                onMouseEnter={() => handleAvatarHover(true)}
+                onMouseLeave={() => handleAvatarHover(false)}
+              >
                 <ResponsiveAvatar onComplete={() => {}} isLoading={isLoading} />
               </div>
 
-              {/* 响应式域名标注 - 移动端更大 */}
+              {/* 响应式域名标注 */}
               <div
                 className={`warm-text font-medium ${
                   isMobile ? "text-2xl sm:text-3xl lg:text-4xl" : "text-xl sm:text-2xl lg:text-3xl"
@@ -666,14 +649,14 @@ export default function Component() {
                     <TypewriterEffect
                       text={displayedDescription}
                       delay={isLoading ? 800 : 0}
-                      speed={isHoveringAvatar ? 0 : 60}
-                      forceFullText={isHoveringAvatar}
+                      speed={60}
+                      forceFullText={false}
                     />
                   </motion.div>
                 </AnimatePresence>
               </motion.div>
 
-              {/* 矩形按钮 - 移动端优化 */}
+              {/* 矩形按钮 */}
               <motion.div
                 transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
                 className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 pt-6"
@@ -692,8 +675,8 @@ export default function Component() {
                   {
                     icon: Globe,
                     label: "联系我",
-                    href: "#", // 改为#
-                    onClick: () => setShowContactModal(true), // 添加点击事件
+                    href: "#",
+                    onClick: () => setShowContactModal(true),
                   },
                 ].map((item, index) => (
                   <motion.div
@@ -769,7 +752,6 @@ export default function Component() {
           </div>
         </motion.div>
 
-        {/* 联系我弹窗 */}
         <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
       </div>
     </>
