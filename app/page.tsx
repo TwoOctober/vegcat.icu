@@ -9,10 +9,12 @@ import Image from "next/image"
 function BilibiliIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .356-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.789 1.894v7.52c.02.765.283 1.395.789 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.128.789-1.893v-7.52c-.02-.765-.283-1.396-.789-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z" />
+      <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .356-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.789 1.894v7.52c.02.765.283 1.395.789 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498 1.134-.755 1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z" />
     </svg>
   )
 }
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=715240&auto=1&height=66"></iframe>
 
 // 优化的打字机效果组件
 function TypewriterEffect({
@@ -93,7 +95,7 @@ function ResponsiveAvatar({ onComplete, isLoading }) {
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
-  const handleInteraction = () => {
+  const handleClick = () => {
     if (isLoading) return
 
     const direction = Math.random() > 0.5 ? 1 : -1
@@ -112,15 +114,13 @@ function ResponsiveAvatar({ onComplete, isLoading }) {
 
   // 移动端更大的头像尺寸
   const avatarSize = isMobile
-    ? "w-40 h-40 sm:w-48 sm:h-48"
-    : "w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64"
+    ? "w-48 h-48 sm:w-56 sm:h-56"
+    : "w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-80 xl:h-80"
 
   return (
     <motion.div
       className="relative cursor-pointer select-none"
-      onMouseEnter={handleInteraction}
-      onTouchStart={handleInteraction}
-      onClick={handleInteraction}
+      onClick={handleClick} // 只保留点击事件
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
@@ -256,7 +256,7 @@ function EnhancedResponsiveBackground() {
 
   // 选择背景图片
   const desktopBg =
-    "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8ho0o-qNZfpecYx-loV1Ij3gF6BmgACYRkAApqnmFZH3mnkoy1eyzYE.jpg"
+    "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECvfFo1T7nkSNHFW3k3piiOQel15EpPAACQC8AAttgqVZ4h-_ykpBOHjYE.jpg"
   const mobileBg =
     "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh8xo0pFTN0Yp1H_7zL3pzPQX1c0JTwACZRkAApqnmFYYPck9JMXOrTYE.jpg"
   const backgroundImage = isMobile ? mobileBg : desktopBg
@@ -411,11 +411,81 @@ function SimpleLoadingAnimation({ onComplete }) {
   )
 }
 
+// 联系我弹窗组件
+function ContactModal({ isOpen, onClose }) {
+  if (!isOpen) return null
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.8, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="relative max-w-md w-full"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            background: "linear-gradient(135deg, #b8956a 0%, #d4a574 100%)",
+            borderRadius: "12px",
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
+          }}
+        >
+          {/* 关闭按钮 */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/20 hover:bg-black/30 transition-colors flex items-center justify-center text-white"
+          >
+            ×
+          </button>
+
+          {/* 标题 */}
+          <div className="p-6 pb-4">
+            <h3 className="text-xl font-medium text-white text-center warm-text">联系方式</h3>
+          </div>
+
+          {/* 图片容器 */}
+          <div className="px-6 pb-6">
+            <div className="relative rounded-lg overflow-hidden bg-black/10">
+              <img
+                src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECk7do09oCTJLgnsKMQfhKnlXjNutRcAACHiAAAttgoVbC13g_hSTY1zYE.jpg"
+                alt="联系方式"
+                className="w-full h-auto"
+                style={{ maxHeight: "400px", objectFit: "contain" }}
+              />
+            </div>
+
+            {/* 保存按钮 */}
+            <div className="mt-4 text-center">
+              <a
+                href="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECk7do09oCTJLgnsKMQfhKnlXjNutRcAACHiAAAttgoVbC13g_hSTY1zYE.jpg"
+                download="vegcat-contact.jpg"
+                className="inline-block px-4 py-2 bg-black/20 hover:bg-black/30 rounded-lg text-white text-sm transition-colors warm-text"
+              >
+                保存图片
+              </a>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
 export default function Component() {
   const [isLoading, setIsLoading] = useState(true)
   const [isHoveringAvatar, setIsHoveringAvatar] = useState(false)
   const [displayedDescription, setDisplayedDescription] = useState("漫无止境的八月循环了多少次")
   const [isMobile, setIsMobile] = useState(false)
+  const [showContactModal, setShowContactModal] = useState(false)
   const hoverTimeoutRef = useRef(null)
 
   useEffect(() => {
@@ -444,7 +514,7 @@ export default function Component() {
       }, 2000)
     } else {
       setIsHoveringAvatar(false)
-      setDisplayedDescription("漫无止境的八月循环了多少次？")
+      setDisplayedDescription("15532次")
     }
   }
 
@@ -499,6 +569,13 @@ export default function Component() {
             padding: 12px 20px !important;
           }
         }
+        /* 桌面端按钮优化 - 更宽 */
+        @media (min-width: 769px) {
+          .desktop-button {
+            min-width: 160px !important; /* 从140px增加到160px */
+            padding: 12px 28px !important; /* 水平padding增加 */
+          }
+        }
         /* 360浏览器特殊处理 */
         .browser-360 .warm-button {
           background-color: #b8956a !important;
@@ -530,11 +607,7 @@ export default function Component() {
           <div className="max-w-4xl w-full">
             <div className="text-center space-y-4 sm:space-y-6">
               {/* 响应式头像 */}
-              <div
-                className="flex justify-center"
-                onMouseEnter={() => handleAvatarHover(true)}
-                onMouseLeave={() => handleAvatarHover(false)}
-              >
+              <div className="flex justify-center">
                 <ResponsiveAvatar onComplete={() => {}} isLoading={isLoading} />
               </div>
 
@@ -586,7 +659,8 @@ export default function Component() {
                   {
                     icon: Globe,
                     label: "联系我",
-                    href: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAECh75o0o28biX4Bx8LpQABB9kt0kAgYhkAAlYZAAKap5hWhIUMoKRTIr42BA.jpg",
+                    href: "#", // 改为#
+                    onClick: () => setShowContactModal(true), // 添加点击事件
                   },
                 ].map((item, index) => (
                   <motion.div
@@ -607,14 +681,22 @@ export default function Component() {
                       scale: 0.95,
                       transition: { duration: 0.1 },
                     }}
-                    className={isMobile ? "mobile-button" : "w-full sm:w-auto"}
+                    className={isMobile ? "mobile-button" : "desktop-button"}
                   >
                     <a
                       href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      target={item.href === "#" ? "_self" : "_blank"}
+                      rel={item.href === "#" ? "" : "noopener noreferrer"}
+                      onClick={
+                        item.onClick
+                          ? (e) => {
+                              e.preventDefault()
+                              item.onClick()
+                            }
+                          : undefined
+                      }
                       className={`warm-button block text-center no-underline text-white font-medium ${
-                        isMobile ? "px-5 py-3 text-sm" : "w-full sm:w-auto px-6 py-3"
+                        isMobile ? "px-5 py-3 text-sm" : "px-6 py-3"
                       }`}
                     >
                       <span className="flex items-center justify-center">
@@ -653,6 +735,9 @@ export default function Component() {
             </div>
           </div>
         </motion.div>
+
+        {/* 联系我弹窗 */}
+        <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
       </div>
     </>
   )
